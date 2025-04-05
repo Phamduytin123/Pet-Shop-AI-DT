@@ -1,0 +1,112 @@
+# Login request
+login_request:
+  email:
+    not_blank:
+      code: VAL_ACC0101
+      message: Email không được để trống!
+    email:
+      code: VAL_ACC0102
+      message: Email không hợp lệ!
+  password:
+    password_validation:
+      code: VAL_ACC0103
+      message: Mật khẩu là bắt buộc. Mật khẩu phải từ 8 đến 32 ký tự, chứa ít nhất 1 chữ cái viết hoa, 1 chữ cái viết thường, 1 ký tự số.
+    password_confirm:
+      code: VAL_ACC0104
+      message: Mật khẩu xác nhận không khớp
+
+# Shopping cart request
+shopping_cart_request:
+  item_id:
+    not_null:
+      code: VAL_CART0101
+      message: Id sản phẩm không được để trống!
+  quantity:
+    not_null:
+      code: VAL_CART0102
+      message: Số lượng sản phẩm không được để trống!
+    min:
+      code: VAL_CART0103
+      message: Số lượng sản phẩm phải lớn hơn 0!
+    max:
+      code: VAL_CART0104
+      message: Số lượng sản phẩm không được vượt quá 100!
+
+# Customer information request
+update_customer_info_request:
+  address:
+    not_blank:
+      code: VAL_CUS0101
+      message: Địa chỉ không được để trống!
+  phone:
+    not_blank:
+      code: VAL_CUS0102
+      message: Số điện thoại không được để trống!
+  name:
+    not_blank:
+      code: VAL_CUS0103
+      message: Tên không được để trống!
+  date_of_birth:
+    not_blank:
+      code: VAL_CUS0104
+      message: Ngày sinh không được để trống!
+  gender:
+    not_blank:
+      code: VAL_CUS0105
+      message: Giới tính không được để trống!
+  height:
+    not_null:
+      code: VAL_CUS0106
+      message: Chiều cao không được để trống!
+    min:
+      code: VAL_CUS0107
+      message: Chiều cao phải lớn hơn 0!
+  weight:
+    not_null:
+      code: VAL_CUS0108
+      message: Cân nặng không được để trống!
+    min:
+      code: VAL_CUS0109
+      message: Cân nặng phải lớn hơn 0!
+  heart_rate:
+    not_null:
+      code: VAL_CUS0110
+      message: Nhịp tim không được để trống!
+    min:
+      code: VAL_CUS0111
+      message: Nhịp tim phải lớn hơn 0!
+  blood_glucose:
+    not_null:
+      code: VAL_CUS0112
+      message: Đường huyết không được để trống!
+    min:
+      code: VAL_CUS0113
+      message: Đường huyết phải lớn hơn 0!
+  blood_pressure:
+    not_null:
+      code: VAL_CUS0114
+      message: Huyết áp không được để trống!
+    min:
+      code: VAL_CUS0115
+      message: Huyết áp phải lớn hơn 0!
+  chest_measurement:
+    not_null:
+      code: VAL_CUS0116
+      message: Vòng ngực không được để trống!
+    min:
+      code: VAL_CUS0117
+      message: Vòng ngực phải lớn hơn 0!
+  waist_measurement:
+    not_null:
+      code: VAL_CUS0118
+      message: Vòng eo không được để trống!
+    min:
+      code: VAL_CUS0119
+      message: Vòng eo phải lớn hơn 0!
+  hips_measurement:
+    not_null:
+      code: VAL_CUS0120
+      message: Vòng mông không được để trống!
+    min:
+      code: VAL_CUS0121
+      message: Vòng mông phải lớn hơn 0!
