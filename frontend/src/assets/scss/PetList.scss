@@ -1,0 +1,37 @@
+.btn {
+    background-color: #3e0068;
+    color: #fff;
+    // border: none !important;
+    &:hover {
+        background-color: #3e0068 !important;
+        color: #fff !important;
+        border: #3e0068 !important;
+    }
+}
+/* CSS custom */
+.search-bar .ant-input-affix-wrapper:hover {
+    border-color: #3e0068 !important;
+    /* màu viền khi hover */
+    .anticon-search:hover{
+        border: #3e0068;
+    }
+    /* hiệu ứng bóng */
+}
+
+/* Nếu muốn đổi màu nền khi hover: */
+.search-bar .ant-input:hover ,
+.search-bar .ant-input:focus{
+    border-color: #3e0068 !important;
+}
+
+.search-bar .ant-input-search-button .anticon-search {
+    color: #3e0068;
+    border: none !important;
+    /* Màu mặc định */
+}
+
+// .ant-input-affix-wrapper:hover .anticon-search,
+// .ant-input-search-button:hover .anticon-search {
+//     color: #722ed1;
+//     /* màu khi hover */
+// }

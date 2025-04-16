@@ -1,0 +1,35 @@
+.pet-card-wrapper {
+    padding: 0px;
+    width: 400px;
+}
+
+.pet-card {
+    position: relative;
+    overflow: visible;
+    background: #e6f4ea;
+    border-radius: 12px;
+    padding-right: 80px;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.read-more-btn {
+    background-color: #3e0068;
+    border: none;
+    &:hover {
+        background-color: #3e0068 !important;
+    }
+}
+
+.pet-image {
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 150px;
+    z-index: 2;
+    height: 225px;
+    object-fit: cover;
+}

@@ -1,0 +1,13 @@
+.custom-sidebar .ant-menu-item{
+    color: #999999;
+    
+}
+
+.custom-sidebar .ant-menu-item-selected {
+    background-color: #d8b4fe !important;
+    /* 💜 tím nhạt */
+    color: #4b0082 !important;
+    /* 💜 chữ tím đậm */
+    border-radius: 2px;
+    font-weight: bold;
+}

@@ -1,0 +1,62 @@
+/* Navbar.scss */
+.header {
+  background-color: #f2e2ff;
+  display: flex;
+  justify-content: space-between;
+  /* Căn logo bên trái và menu bên phải */
+  align-items: center;
+  /* Căn giữa các phần tử theo chiều dọc */
+  padding: 0 20px;
+  /* Thêm padding để tạo khoảng cách bên ngoài */
+}
+
+.logo {
+  font-size: 12px;
+  font-weight: bold;
+  color: #722ed1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: flex-end;
+  /* Căn menu về bên phải */
+}
+
+.custom-menu {
+  background-color: #F2E2FF;
+  border: none;
+  /* Loại bỏ border mặc định của menu */
+}
+
+/* Đảm bảo không có border-bottom mặc định */
+.custom-menu .ant-menu-item {
+  border-bottom: none !important;
+}
+
+.custom-menu .ant-menu-item {
+  color: #999999;
+  transition: all 0.3s;
+  font-weight: bold;
+  font-size: 20px;
+  &:hover {
+    color: #410075;
+    border-bottom: 3.5px solid #410075;
+  }
+
+  &.ant-menu-item-selected {
+    color: #410075;
+    border-bottom: 3.5px solid #410075;
+  }
+
+  // .anticon {
+  //     color: inherit;
+  // }
+}
+
+.custom-menu .ant-menu-item-disabled {
+  color: #999 !important;
+  cursor: default !important;
+}
