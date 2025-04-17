@@ -5,7 +5,7 @@ import PetCard from "./PetCard";
 
 const PetList = ({ pets }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 10;
 
   const start = (currentPage - 1) * pageSize;
   const currentPets = pets.slice(start, start + pageSize);

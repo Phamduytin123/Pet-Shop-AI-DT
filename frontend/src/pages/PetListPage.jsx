@@ -7,16 +7,41 @@ import MainLayout from "../layout/MainLayout";
 import Title from "antd/es/skeleton/Title";
 import Search from "antd/es/input/Search";
 const { Sider, Content } = Layout;
+import axios from "axios";
+import { useEffect, useState } from "react";
 import "../assets/scss/PetList.scss";
-
-const mockPets = Array.from({ length: 12 }, (_, i) => ({
-  id: i + 1,
-  name: `Thú cưng ${i + 1}`,
-  image: `https://placedog.net/400/30${i % 10}`,
-  price: 5000000 + i * 100000,
-}));
+import petService from "../service/petService";
 
 const PetListPage = () => {
+  const [pets, setPets] = useState([]);
+  const [breeds, setBreeds] = useState([]);
+  const [filteredPets, setFilteredPets] = useState([]);
+  useEffect(() => {
+    const fetchGetListPet = async () => {
+      try {
+        const res = await petService.getAllPet();
+        const breedRes = await petService.getAllBreedsPet();
+        const data = res.data;
+        console.log(data);
+        console.log(breedRes.data);
+        setPets(data);
+        setFilteredPets(data);
+        setBreeds(breedRes.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchGetListPet();
+  }, []);
+
+  const handleFilterChange = (selectedBreeds) => {
+    if (selectedBreeds.length === 0) {
+      setFilteredPets(pets); // all
+    } else {
+      const filtered = pets.filter((pet) => selectedBreeds.includes(pet.breed));
+      setFilteredPets(filtered);
+    }
+  };
   return (
     <MainLayout>
       <Layout style={{ minHeight: "100vh", backgroundColor: "#F2E2FF" }}>
@@ -30,10 +55,10 @@ const PetListPage = () => {
             borderRadius: "12px",
           }}
         >
-          <Sidebar />
+          <Sidebar breeds={breeds} onFilterChange={handleFilterChange} />
         </Sider>
 
-        <Layout style={{ padding: 24 }}>
+        <Layout style={{ padding: 24, backgroundColor: "#F2E2FF" }}>
           <div
             style={{
               display: "flex",
@@ -57,7 +82,7 @@ const PetListPage = () => {
           </div>
           <Content style={{ background: "#fff", padding: 24 }}>
             <Title level={3}>Danh sách thú cưng</Title>
-            <PetList pets={mockPets} />
+            <PetList pets={filteredPets} />
           </Content>
         </Layout>
       </Layout>

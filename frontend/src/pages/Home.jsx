@@ -4,8 +4,10 @@ import AboutSection from "../components/guest/AboutSection";
 import ProductList from "../components/guest/ProductList";
 import Testimonials from "../components/guest/Testimonials";
 import Hero from "../components/guest/Hero";
-
+import { API_BASE_URL } from "../constants/Env";
 const Home = () => {
+  console.log(API_BASE_URL);
+
   return (
     <MainLayout>
       <Hero />
