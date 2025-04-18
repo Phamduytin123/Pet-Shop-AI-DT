@@ -1,0 +1,56 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings (optional)
+.vscode/
+
+# Environment files
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+env/
+
+# Model files (hạn chế tải lên Git)
+*.h5
+*.hdf5
+*.ckpt
+*.pth
+*.pt
+*.pb
+*.joblib
+*.pkl
+*.sav
+*.onnx
+*.tflite
+
+# Dataset files
+*.csv
+*.tsv
+*.zip
+*.tar.gz
+*.npz
+*.npy
+*.db
+*.sqlite3
+
+# Logs and outputs
+*.log
+*.out
+*.tmp
+logs/
+output/
+runs/
+
+# Colab / Kaggle
+*.ipynb_output/
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db

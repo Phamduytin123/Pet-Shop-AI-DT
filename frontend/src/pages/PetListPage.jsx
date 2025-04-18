@@ -11,11 +11,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "../assets/scss/PetList.scss";
 import petService from "../service/petService";
-
+// import { Modal, Upload, message, Card, Spin } from "antd";
+import { Modal, Upload, message, Card, Image } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 const PetListPage = () => {
   const [pets, setPets] = useState([]);
   const [breeds, setBreeds] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
+
+  //AI method state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [predictedPet, setPredictedPet] = useState(null);
   useEffect(() => {
     const fetchGetListPet = async () => {
       try {
@@ -40,6 +47,35 @@ const PetListPage = () => {
     } else {
       const filtered = pets.filter((pet) => selectedBreeds.includes(pet.breed));
       setFilteredPets(filtered);
+    }
+  };
+
+  //AI
+  const showModal = () => setIsModalOpen(true);
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setFileList([]);
+    setPredictedPet(null);
+  };
+
+  const handleUploadChange = ({ fileList }) => {
+    setFileList(fileList.slice(-1)); // chỉ giữ 1 ảnh
+  };
+  const handleSearchImage = async () => {
+    if (!fileList.length) {
+      message.warning("Vui lòng chọn một ảnh để tìm kiếm!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileList[0].originFileObj);
+
+    try {
+      const res = await petService.searchPetByImage(formData);
+      setPredictedPet(res.data); // gán pet vào state
+    } catch (err) {
+      message.error("Không thể tìm kiếm bằng hình ảnh!");
+      console.error(err);
     }
   };
   return (
@@ -77,7 +113,78 @@ const PetListPage = () => {
                 style={{ width: "700px" }}
                 className="search-bar"
               />
-              <Button className="btn">Tìm kiếm bằng hình ảnh</Button>
+              <Button className="btn" onClick={showModal}>
+                Tìm kiếm bằng hình ảnh
+              </Button>
+              {/* Modal */}
+              <Modal
+                title="Tìm kiếm thú cưng bằng hình ảnh"
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={[
+                  <Button key="cancel" onClick={handleCancel}>
+                    Hủy
+                  </Button>,
+                  <Button
+                    key="search"
+                    type="primary"
+                    onClick={handleSearchImage}
+                  >
+                    Tìm kiếm
+                  </Button>,
+                ]}
+              >
+                <Upload.Dragger
+                  beforeUpload={() => false}
+                  accept=".png,.jpg,.jpeg,.webp"
+                  multiple={false}
+                  fileList={fileList}
+                  onChange={handleUploadChange}
+                  showUploadList={false} // ✨ Ẩn danh sách file mặc định
+                >
+                  {fileList.length > 0 ? (
+                    <Image
+                      src={URL.createObjectURL(fileList[0].originFileObj)}
+                      alt="Ảnh đã chọn"
+                      style={{ maxHeight: 200, objectFit: "contain" }}
+                    />
+                  ) : (
+                    <>
+                      <p className="ant-upload-drag-icon">
+                        <UploadOutlined />
+                      </p>
+                      <p className="ant-upload-text">
+                        Kéo ảnh vào đây hoặc click để chọn
+                      </p>
+                      <p className="ant-upload-hint">
+                        Chỉ hỗ trợ PNG, JPG, JPEG, WEBP
+                      </p>
+                    </>
+                  )}
+                </Upload.Dragger>
+                {predictedPet && (
+                  <Card
+                    title={`Kết quả: ${predictedPet.name}`}
+                    style={{ marginTop: 24 }}
+                    cover={
+                      <Image src={predictedPet.image} alt={predictedPet.name} />
+                    }
+                  >
+                    <p>
+                      <strong>Giống:</strong> {predictedPet.breed}
+                    </p>
+                    <p>
+                      <strong>Độ khó chăm:</strong> {predictedPet.difficulty}
+                    </p>
+                    <p>
+                      <strong>Hành vi:</strong> {predictedPet.behavior}
+                    </p>
+                    <p>
+                      <strong>Mô tả:</strong> {predictedPet.description}
+                    </p>
+                  </Card>
+                )}
+              </Modal>
             </div>
           </div>
           <Content style={{ background: "#fff", padding: 24 }}>

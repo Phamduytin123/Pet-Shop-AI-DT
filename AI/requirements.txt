@@ -1,0 +1,8 @@
+Flask
+Pillow
+pandas
+flask-cors
+keras
+numpy
+scikit-learn
+joblib

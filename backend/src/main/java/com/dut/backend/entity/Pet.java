@@ -18,7 +18,6 @@ import java.util.List;
 @Table(name = "pets")
 public class Pet extends EntityBase {
     private String name;
-    private String style;
     private String breed;
     private String image;
     private Integer difficulty;
