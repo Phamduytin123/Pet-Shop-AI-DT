@@ -7,7 +7,6 @@ import MainLayout from "../layout/MainLayout";
 import Title from "antd/es/skeleton/Title";
 import Search from "antd/es/input/Search";
 const { Sider, Content } = Layout;
-import axios from "axios";
 import { useEffect, useState } from "react";
 import "../assets/scss/PetList.scss";
 import petService from "../service/petService";
@@ -114,7 +113,7 @@ const PetListPage = () => {
                 className="search-bar"
               />
               <Button className="btn" onClick={showModal}>
-                Tìm kiếm bằng hình ảnh
+                Find by image
               </Button>
               {/* Modal */}
               <Modal
@@ -140,7 +139,7 @@ const PetListPage = () => {
                   multiple={false}
                   fileList={fileList}
                   onChange={handleUploadChange}
-                  showUploadList={false} // ✨ Ẩn danh sách file mặc định
+                  showUploadList={false} //
                 >
                   {fileList.length > 0 ? (
                     <Image
