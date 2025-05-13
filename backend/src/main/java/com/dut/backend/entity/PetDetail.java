@@ -16,16 +16,17 @@ import java.time.LocalDate;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorValue("PET")
 @Table(name = "pet_details")
 public class PetDetail  extends ItemBase{
     private String color;
     private Integer age;
     private boolean gender;
-    private LocalDate dateTime;
+    private String image;
     private String heathStatus;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id", referencedColumnName = "id")
-//    @JsonBackReference
+    @JsonBackReference
     private Pet pet;
 
 }

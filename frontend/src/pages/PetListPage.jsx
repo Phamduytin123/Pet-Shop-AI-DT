@@ -6,6 +6,8 @@ import PetList from "../components/guest/productlist/PetList";
 import MainLayout from "../layout/MainLayout";
 import Title from "antd/es/skeleton/Title";
 import Search from "antd/es/input/Search";
+import { useNavigate } from "react-router-dom";
+
 const { Sider, Content } = Layout;
 import { useEffect, useState } from "react";
 import "../assets/scss/PetList.scss";
@@ -15,6 +17,7 @@ import { Modal, Upload, message, Card, Image } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 const PetListPage = () => {
   const [pets, setPets] = useState([]);
+  const navigate = useNavigate();
   const [breeds, setBreeds] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
 
@@ -76,6 +79,9 @@ const PetListPage = () => {
       message.error("Không thể tìm kiếm bằng hình ảnh!");
       console.error(err);
     }
+  };
+  const handleClickCardPredict = (breed) => {
+    navigate(`/pets/${breed}`);
   };
   return (
     <MainLayout>
@@ -168,6 +174,7 @@ const PetListPage = () => {
                     cover={
                       <Image src={predictedPet.image} alt={predictedPet.name} />
                     }
+                    onClick={() => handleClickCardPredict(predictedPet.breed)}
                   >
                     <p>
                       <strong>Giống:</strong> {predictedPet.breed}

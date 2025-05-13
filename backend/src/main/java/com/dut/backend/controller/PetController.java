@@ -2,7 +2,11 @@ package com.dut.backend.controller;
 
 import com.dut.backend.common.model.AbstractResponse;
 import com.dut.backend.common.util.CommonUtils;
+import com.dut.backend.dto.request.AddPetDetailRequest;
 import com.dut.backend.entity.Pet;
+import com.dut.backend.entity.PetDetail;
+import com.dut.backend.repository.PetRepository;
+import com.dut.backend.service.PetDetailService;
 import com.dut.backend.service.PetService;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,29 @@ import java.util.Map;
 public class PetController {
     private final PetService petService;
     private final RestTemplate restTemplate;
+    private final PetDetailService petDetailService;
+    private final PetRepository petRepository;
+
+    @GetMapping("/{breed}")
+    public ResponseEntity<AbstractResponse> getListPetDetailByBreed(@PathVariable String breed) {
+        try {
+            List<PetDetail> response = petDetailService.getListPetDetailByBreed(breed);
+            System.out.println(response);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(response));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PostMapping("/addPetDetails")
+    public ResponseEntity<AbstractResponse> addPetDetails(@RequestBody List<AddPetDetailRequest> petDetails) {
+        System.out.println("oke");
+        try {
+            List<PetDetail> response = petDetailService.addListPetDetail(petDetails);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(response));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
     @GetMapping
     public ResponseEntity<AbstractResponse> getAllPets() {
         List<Pet> pets = petService.getAllPets();
@@ -68,6 +95,16 @@ public class PetController {
             Pet pet = petService.getPetByBreed(dataJson);
 
             // Trả lại kết quả dự đoán
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(pet));
+        } catch (Exception e) {
+            // Nếu có lỗi xảy ra trong quá trình gửi yêu cầu hoặc nhận kết quả
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @GetMapping("/pet-info")
+    public ResponseEntity<AbstractResponse> getPetInfo(@RequestParam("breed") String breed) {
+        try {
+            Pet pet = petService.getPetByBreed(breed);
             return ResponseEntity.ok(AbstractResponse.successWithoutMeta(pet));
         } catch (Exception e) {
             // Nếu có lỗi xảy ra trong quá trình gửi yêu cầu hoặc nhận kết quả

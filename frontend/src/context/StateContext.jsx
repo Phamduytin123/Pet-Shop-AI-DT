@@ -42,7 +42,7 @@ export const StateProvider = ({ initialState, reducer, children }) => {
 
     // Check if user is logged in
     const token = getTokensFromStorage();
-    console.log(token);
+    console.log("token: ", token);
 
     if (token) {
       getAccountViaToken();

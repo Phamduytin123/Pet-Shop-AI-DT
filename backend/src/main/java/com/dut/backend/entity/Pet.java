@@ -1,5 +1,6 @@
 package com.dut.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Pet extends EntityBase {
     private Integer group;
     private String description;
     @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<PetDetail> petDetails;
 
 }

@@ -9,23 +9,44 @@ app = Flask(__name__)
 
 
 # Đường dẫn đến model .keras
-MODEL_PATH = r"D:\LN_\totnghiep\Pet-Shop-AI-DT\AI\model\best_model.h5"
+MODEL_PATH = r"D:\LN_\totnghiep\Pet-Shop-AI-DT\AI\model\best_model_v2.h5"
 print("Zip test:", zipfile.is_zipfile(MODEL_PATH))
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 
 
+# class_labels = [
+#     "Abyssinian",
+#     "American Bobtail",
+#     "American Curl",
+#     "American Shorthair",
+#     "Bengal",
+#     "Birman",
+#     "Bombay",
+#     "British Shorthair",
+#     "Egyptian Mau",
+#     "Exotic Shorthair",
+#     "Maine Coon",
+#     "Manx",
+#     "Norwegian Forest",
+#     "Persian",
+#     "Ragdoll",
+#     "Russian Blue",
+#     "Scottish Fold",
+#     "Siamese",
+#     "Sphynx",
+#     "Turkish Angora",
+# ]
 class_labels = [
     "Abyssinian",
     "American Bobtail",
-    "American Curl",
-    "American Shorthair",
     "Bengal",
     "Birman",
     "Bombay",
     "British Shorthair",
     "Egyptian Mau",
     "Exotic Shorthair",
+    "Lykoi",
     "Maine Coon",
     "Manx",
     "Norwegian Forest",
@@ -34,9 +55,11 @@ class_labels = [
     "Russian Blue",
     "Scottish Fold",
     "Siamese",
+    "Singapura",
     "Sphynx",
     "Turkish Angora",
-]  # Thay theo dataset của bạn
+    "Tuxedo",
+]
 
 
 @app.route("/")

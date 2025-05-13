@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +24,15 @@ public class ImageController {
             return ResponseEntity.ok(url);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
+        }
+    }
+    @PostMapping("/uploads")
+    public ResponseEntity<List<String>> uploads(@RequestParam("file") List<MultipartFile> files) {
+        try {
+            List<String> url = cloudinaryService.uploadFiles(files);
+            return ResponseEntity.ok(url);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonList("Upload failed"));
         }
     }
 

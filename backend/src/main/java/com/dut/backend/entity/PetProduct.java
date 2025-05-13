@@ -15,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorValue("PRODUCT")
 @Table(name = "pet_products")
 public class PetProduct extends ItemBase{
     private String name;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PetRepository  extends JpaRepository<Pet, Integer> {
+public interface PetRepository  extends JpaRepository<Pet, Long> {
     @Query("SELECT  p.breed FROM Pet p ")
     List<String> findBreeds();
     Pet findByBreed(String breed);

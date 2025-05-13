@@ -2,17 +2,17 @@
 import React from "react";
 import { Card } from "antd";
 import { useNavigate } from "react-router-dom";
-const PetCard = ({ pet }) => {
+const PetDetailCard = ({ petDetail, breed }) => {
   const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/pets/${pet.breed}`);
+  const handleClick = (breed, id) => {
+    navigate(`/pet-detail/${breed}/${id}`);
   };
+
   return (
     <Card
       hoverable
-      onClick={handleClick}
       style={{ width: 240 }}
+      onClick={() => handleClick(breed, petDetail.id)}
       cover={
         <div
           style={{
@@ -24,8 +24,8 @@ const PetCard = ({ pet }) => {
           }}
         >
           <img
-            alt={pet.name}
-            src={pet.image}
+            alt={petDetail.color}
+            src={petDetail.image}
             style={{
               width: "100%",
               height: "100%",
@@ -35,9 +35,12 @@ const PetCard = ({ pet }) => {
         </div>
       }
     >
-      <Card.Meta title={pet.name} description={`Giá: ${pet.breed} VND`} />
+      <Card.Meta
+        title={petDetail.color}
+        description={`Giá: ${petDetail.price} VND`}
+      />
     </Card>
   );
 };
 
-export default PetCard;
+export default PetDetailCard;

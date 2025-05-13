@@ -22,7 +22,7 @@ const Navbar = () => {
     "/pets": "shop",
     "/contact": "contact",
     "/course": "course",
-    "/cart": "cart",
+    "/shopping-carts": "cart",
     "/register": "register",
     "/login": "login",
     "/profile": "user",
@@ -82,7 +82,7 @@ const Navbar = () => {
     {
       key: "cart",
       icon: <ShoppingCartOutlined />,
-      onClick: () => navigate("/cart"),
+      onClick: () => navigate("/shopping-carts"),
     },
     !account && {
       key: "register",
