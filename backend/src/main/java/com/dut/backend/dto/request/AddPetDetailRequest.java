@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class AddPetDetailRequest {
     private Long petId;
+    private String name;
     private String color;
     private Integer age;
     private boolean gender;

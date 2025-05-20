@@ -7,6 +7,9 @@ import RegisterPage from "../pages/RegisterPage";
 import PetDetailListPage from "../pages/PetDetailListPage";
 import PetDetailPage from "../pages/PetDetailPage";
 import ShoppingCartPage from "../pages/Customer/ShoppingCartPage";
+import PaymentInformationPage from "../pages/Customer/PaymentInformationPage";
+import OrderPage from "../pages/Customer/OrderPage";
+import OrderDetailPage from "../pages/Customer/OrderDetailPage";
 
 const AppRoutes = () => {
   return (
@@ -26,6 +29,15 @@ const AppRoutes = () => {
       <Route
         path="/shopping-carts"
         element={<ShoppingCartPage></ShoppingCartPage>}
+      ></Route>
+      <Route
+        path="/payment/info"
+        element={<PaymentInformationPage></PaymentInformationPage>}
+      ></Route>
+      <Route path="/orders" element={<OrderPage></OrderPage>}></Route>
+      <Route
+        path="/orders/:orderId"
+        element={<OrderDetailPage></OrderDetailPage>}
       ></Route>
     </Routes>
   );

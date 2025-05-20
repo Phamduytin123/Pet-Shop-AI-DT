@@ -17,30 +17,6 @@ import { data, useNavigate } from "react-router-dom";
 import shoppingCartService from "../../service/shoppingCartService";
 const { Title, Text } = Typography;
 
-const mockItems = [
-  {
-    id: 1,
-    color: "Item A",
-    image:
-      "http://res.cloudinary.com/duwta75bz/image/upload/v1746779567/c9caq7o1tyks9cpkqq1u.jpg",
-    price: 100,
-  },
-  {
-    id: 2,
-    color: "Item B",
-    image:
-      "http://res.cloudinary.com/duwta75bz/image/upload/v1746779567/c9caq7o1tyks9cpkqq1u.jpg",
-    price: 150,
-  },
-  {
-    id: 3,
-    color: "Item C",
-    image:
-      "http://res.cloudinary.com/duwta75bz/image/upload/v1746779567/c9caq7o1tyks9cpkqq1u.jpg",
-    price: 200,
-  },
-];
-
 const ShoppingCartPage = () => {
   const [selectedItems, setSelectedItems] = useState({});
   const [carts, setCarts] = useState([]);
@@ -60,7 +36,7 @@ const ShoppingCartPage = () => {
           const item = cart.item;
           return {
             id: item.id,
-            color: "item.color",
+            name: item.name,
             image: item.image,
             price: item.price,
             quantity: cart.quantity,
@@ -75,18 +51,22 @@ const ShoppingCartPage = () => {
     };
     fetchGetCarts();
   }, []);
-  const allSelected = carts.length === Object.keys(selectedItems).length;
+  const allSelected =
+    carts.length > 0 &&
+    carts.every((item) => selectedItems.hasOwnProperty(item.id));
   const handleSelectAll = (checked) => {
     const newSelected = {};
     if (checked) {
       carts.forEach((item) => {
         newSelected[item.id] = {
-          quantity: selectedItems[item.id]?.quantity || 1,
           ...item,
+          quantity: selectedItems[item.id]?.quantity || item.quantity || 1,
         };
       });
+      setSelectedItems(newSelected);
+    } else {
+      setSelectedItems({});
     }
-    setSelectedItems(newSelected);
   };
 
   const handleSelect = (itemId, checked) => {
@@ -108,17 +88,30 @@ const ShoppingCartPage = () => {
   };
 
   const handleQuantityChange = (itemId, quantity) => {
-    setSelectedItems((prev) => ({
-      ...prev,
-      [itemId]: { ...prev[itemId], quantity },
-    }));
+    setCarts((prevCarts) =>
+      prevCarts.map((item) =>
+        item.id === itemId ? { ...item, quantity } : item
+      )
+    );
+
+    setSelectedItems((prev) => {
+      if (!prev[itemId]) return prev;
+      return {
+        ...prev,
+        [itemId]: { ...prev[itemId], quantity },
+      };
+    });
   };
 
   const totalAmount = Object.values(selectedItems).reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
+  const handleConfirmClick = () => {
+    console.log("confirm:", carts);
+    navigate("/payment/info", { state: { items: selectedItems } });
+    console.log("why");
+  };
   return (
     <MainLayout>
       <div
@@ -163,7 +156,7 @@ const ShoppingCartPage = () => {
                 />
                 {/* <div style={{ width: 50, marginRight: 12 }} />{" "} */}
                 {/* image placeholder */}
-                <div style={{ flex: 1, marginLeft: 25 }}>Item color</div>
+                <div style={{ flex: 1, marginLeft: 25 }}>Item name</div>
                 {/* <div style={{ flex: 1, marginLeft: 25 }}>Item color</div> */}
                 <div style={{ flex: 1, paddingLeft: 90 }}>Unit Price</div>
                 <div style={{ flex: 1, marginLeft: 16 }}>Quantity</div>
@@ -206,7 +199,7 @@ const ShoppingCartPage = () => {
                           }}
                         >
                           <div style={{ flex: 1, marginLeft: 25 }}>
-                            <Text strong>{item.color}</Text>
+                            <Text strong>{item.name}</Text>
                             {/* <br /> */}
                           </div>
                           <div style={{ flex: 1 }}>
@@ -220,7 +213,6 @@ const ShoppingCartPage = () => {
                               icon={<MinusOutlined />}
                               disabled={!selected}
                               onClick={() =>
-                                selected &&
                                 handleQuantityChange(
                                   item.id,
                                   Math.max(1, selected.quantity - 1)
@@ -229,7 +221,8 @@ const ShoppingCartPage = () => {
                             />
                             <InputNumber
                               min={1}
-                              value={selected ? selected.quantity : 1}
+                              // value={selected ? selected.quantity : 1}
+                              value={item.quantity}
                               disabled={!selected}
                               onChange={(value) =>
                                 handleQuantityChange(item.id, value)
@@ -241,7 +234,6 @@ const ShoppingCartPage = () => {
                               icon={<PlusOutlined />}
                               disabled={!selected}
                               onClick={() =>
-                                selected &&
                                 handleQuantityChange(
                                   item.id,
                                   selected.quantity + 1
@@ -278,27 +270,40 @@ const ShoppingCartPage = () => {
           {/* Right: Order Summary */}
           <Col span={10}>
             <Card title="Order Summary">
+              {/* Header */}
+              <div
+                style={{ display: "flex", fontWeight: "bold", marginBottom: 8 }}
+              >
+                <div style={{ flex: 2 }}>Product</div>
+                <div style={{ flex: 1, textAlign: "center" }}>Quantity</div>
+                <div style={{ flex: 1, textAlign: "right" }}>Price</div>
+              </div>
+
+              {/* List Items */}
               <List
                 dataSource={Object.values(selectedItems)}
                 renderItem={(item) => (
                   <List.Item>
-                    <div style={{ width: "100%" }}>
-                      <Text>{item.color}</Text>
-                      <br />
-                      <Text>
-                        Qty: {item.quantity} x {item.price.toLocaleString()} VND
-                      </Text>
-                      <br />
-                      <Text type="secondary">
-                        = {(item.quantity * item.price).toLocaleString()} VND
-                      </Text>
+                    <div style={{ display: "flex", width: "100%" }}>
+                      <div style={{ flex: 2 }}>{item.name}</div>
+                      <div style={{ flex: 1, textAlign: "center" }}>
+                        {item.quantity}x
+                      </div>
+                      <div style={{ flex: 1, textAlign: "right" }}>
+                        {(item.quantity * item.price).toLocaleString()} VND
+                      </div>
                     </div>
                   </List.Item>
                 )}
               />
               <hr />
               <Title level={5}>Total: {totalAmount.toLocaleString()} VND</Title>
-              <Button type="primary" block disabled={totalAmount === 0}>
+              <Button
+                type="primary"
+                block
+                disabled={totalAmount === 0}
+                onClick={handleConfirmClick}
+              >
                 Confirm Order
               </Button>
             </Card>

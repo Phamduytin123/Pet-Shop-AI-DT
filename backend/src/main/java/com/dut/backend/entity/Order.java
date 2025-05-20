@@ -20,9 +20,11 @@ public class Order extends EntityBase{
     private Integer totalPrice = 0;
     private String phoneNumber;
     private String address;
+    private String orderCode;
+    private boolean isPaid = false;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.PENDING;
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;

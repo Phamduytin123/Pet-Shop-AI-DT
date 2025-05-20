@@ -23,6 +23,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public ShoppingCart addShoppingCart(AddCartRequest addCartRequest, Account account) {
         ItemBase item = itemBaseRepository.findById(addCartRequest.getItemId())
                 .orElseThrow(() -> new RuntimeException("Item not found"));
+        ShoppingCart foundedCart = shoppingCartRepository.findByAccountIdAndItemId(account.getId(),item.getId()).orElse(null);
+        if (foundedCart != null) {
+            throw new RuntimeException("Item was added to shopping cart");
+        }
         ShoppingCart cart = ShoppingCart.builder()
                 .account(account)
                 .item(item)

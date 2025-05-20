@@ -24,4 +24,12 @@ public class PetProduct extends ItemBase{
     private ProductType type;
     private String image;
     private String description;
+    @Override
+    public String getName() {
+        return this.name;
+    }
+    @Override
+    public String getImage() {
+        return this.image;
+    }
 }

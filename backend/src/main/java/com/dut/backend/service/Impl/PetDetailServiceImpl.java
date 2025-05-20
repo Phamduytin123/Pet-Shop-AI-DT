@@ -31,6 +31,7 @@ public class PetDetailServiceImpl implements PetDetailService {
                             .price(addPetDetailRequest.getPrice())
                             .quantity(addPetDetailRequest.getQuantity())
                             .pet(pet)
+                            .name(addPetDetailRequest.getName())
                             .build();
                 })
                 .collect(Collectors.toList());

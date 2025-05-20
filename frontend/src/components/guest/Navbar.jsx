@@ -45,6 +45,11 @@ const Navbar = () => {
           onClick: () => navigate("/profile"),
         },
         {
+          key: "Order history",
+          label: "My Order History",
+          onClick: () => navigate("/orders"),
+        },
+        {
           key: "logout",
           label: "Logout",
           icon: <LogoutOutlined />,

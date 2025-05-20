@@ -1,0 +1,60 @@
+.custom-steps-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 40px 20px;
+    position: relative;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.step-item::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    height: 2px;
+    width: 100%;
+    background-color: #f0f0f0;
+    z-index: -1;
+}
+
+.step-item:last-child::after {
+    display: none;
+}
+
+.step-icon {
+    background: white;
+    padding: 10px;
+    border-radius: 50%;
+    border: 2px solid #d9d9d9;
+}
+
+.step-item.active .step-icon {
+    border-color: #fa8c16 !important;
+}
+
+.step-title {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12px;
+}
+.ant-steps-item-active .ant-steps-item-title {
+    font-weight: bold; 
+color: #722ed1 !important;}
+
+/* Tăng độ dày và đổi màu line giữa các bước */
+.ant-steps-horizontal:not(.ant-steps-label-vertical) .ant-steps-item::after {
+    height: 4px;
+    /* tăng size line */
+    background-color: #410075 !important;
+    /* đổi màu line */
+    top: 20px;
+    /* căn chỉnh nếu cần */ }
+    

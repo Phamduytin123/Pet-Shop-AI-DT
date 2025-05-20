@@ -24,4 +24,6 @@ public abstract class ItemBase extends EntityBase {
     private Integer price;
     private Integer quantity;
 //    private ItemType typeValue;
+    public abstract String getName();
+    public abstract String getImage();
 }

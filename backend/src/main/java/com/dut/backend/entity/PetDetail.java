@@ -19,6 +19,7 @@ import java.time.LocalDate;
 @DiscriminatorValue("PET")
 @Table(name = "pet_details")
 public class PetDetail  extends ItemBase{
+    private String name;
     private String color;
     private Integer age;
     private boolean gender;
@@ -28,5 +29,12 @@ public class PetDetail  extends ItemBase{
     @JoinColumn(name = "pet_id", referencedColumnName = "id")
     @JsonBackReference
     private Pet pet;
-
+    @Override
+    public String getName() {
+        return this.name+" "+this.color;
+    }
+    @Override
+    public String getImage() {
+        return this.image;
+    }
 }

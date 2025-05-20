@@ -39,7 +39,7 @@ create table orders
     updated_at   datetime(6)                                                                                 null,
     address      varchar(255)                                                                                null,
     phone_number varchar(255)                                                                                null,
-    status       enum ('CANCELLED', 'COMPLETED', 'CONFIRMED', 'DELIVERING', 'PENDING', 'PREPARING', 'READY') not null,
+    status       enum ('CANCELLED', 'COMPLETED', 'CONFIRMED', 'DELIVERING', 'PENDING', 'PREPARING', 'DELIVERED') not null,
     total_price  int                                                                                         null,
     account_id   bigint                                                                                      null,
     constraint FKagh5svlor3slbay6tq5wqor1o
