@@ -9,6 +9,10 @@ import { ReducerCases } from "../constants/ReducerCases";
 import { useStateContext } from "../context/StateContext";
 import { useNavigate } from "react-router-dom";
 import shoppingCartService from "../service/shoppingCartService";
+import {
+  showErrorNotification,
+  showSuccessNotification,
+} from "../utils/commonUtils";
 const PetDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [petDetail, setPetDetail] = useState();
@@ -41,7 +45,7 @@ const PetDetailPage = () => {
     };
     fetchGetPetDetailById();
   }, [petDetailId]);
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     console.log("Thêm vào giỏ hàng:", { petDetail, quantity });
     if (!state.account) {
       navigate("/login");
@@ -53,11 +57,16 @@ const PetDetailPage = () => {
       console.log(request);
 
       try {
-        const res = shoppingCartService.addToCart(request);
+        const res = await shoppingCartService.addToCart(request);
+        showSuccessNotification(
+          "Adding success",
+          "Adding product to cart success"
+        );
+        navigate("/shopping-carts");
       } catch (error) {
+        showErrorNotification("Adding Failed", error);
         console.error("Error adding to cart:", error);
       }
-      navigate("/shopping-carts");
     }
   };
 

@@ -10,7 +10,7 @@ import ShoppingCartPage from "../pages/Customer/ShoppingCartPage";
 import PaymentInformationPage from "../pages/Customer/PaymentInformationPage";
 import OrderPage from "../pages/Customer/OrderPage";
 import OrderDetailPage from "../pages/Customer/OrderDetailPage";
-
+import AccountInfoPage from "../pages/Customer/AccountInfoPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -38,6 +38,10 @@ const AppRoutes = () => {
       <Route
         path="/orders/:orderId"
         element={<OrderDetailPage></OrderDetailPage>}
+      ></Route>
+      <Route
+        path="/profile"
+        element={<AccountInfoPage></AccountInfoPage>}
       ></Route>
     </Routes>
   );

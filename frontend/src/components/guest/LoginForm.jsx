@@ -39,6 +39,7 @@ const LoginForm = () => {
         console.log(data);
         showSuccessNotification("Login success", "Login success");
         dispatch({ type: ReducerCases.SET_ACCOUNT_INFO, data });
+
         switch (data?.role) {
           case ROLE_CUSTOMER:
             navigate("/");
@@ -50,10 +51,14 @@ const LoginForm = () => {
             navigate("/");
             break;
         }
+
         navigate("/");
       }
     } catch (error) {
-      showErrorNotification("Đăng nhập thất bại", error.message);
+      showErrorNotification(
+        "Login Failed",
+        "Please check again your password or email !!"
+      );
     }
   };
 

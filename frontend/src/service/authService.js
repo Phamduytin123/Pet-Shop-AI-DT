@@ -28,7 +28,40 @@ const authService = {
             throw new Error("Register failed!")
         }
     },
-    getAccountInfo: async () => apiClient.get('/auth/me')
+    getAccountInfo: async () => apiClient.get('/auth/me'),
+    updateInfo: async (data) => {
+        const response = await apiClient.put("/auth/updateInfo", data);
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Update Account Information Failed!");
+        }
+    },
+    updateAvatar: async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await apiClient.put("/auth/updateAvatar", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Update Avatar Failed!");
+        }
+    },
+
+    updatePassword: async (data) => {
+        const response = await apiClient.put("/auth/updatePassword", data);
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Update Password Failed!");
+        }
+    }
 
 }
  export default authService

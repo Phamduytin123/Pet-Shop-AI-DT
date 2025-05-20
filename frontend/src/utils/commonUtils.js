@@ -8,6 +8,7 @@ const showNotification = (type, message, description, duration = 3) => {
     notification[type]({
         message,
         description,
+        placement: "topRight",
         duration,
     });
 };
