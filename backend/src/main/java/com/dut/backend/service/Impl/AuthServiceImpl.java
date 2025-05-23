@@ -3,9 +3,7 @@ package com.dut.backend.service.Impl;
 import com.dut.backend.common.constant.ErrorMessageConstants;
 import com.dut.backend.common.exception.ForbiddenException;
 import com.dut.backend.config.JwtUtil;
-import com.dut.backend.dto.request.ConfirmRegisterRequest;
-import com.dut.backend.dto.request.LoginRequest;
-import com.dut.backend.dto.request.RegisterRequest;
+import com.dut.backend.dto.request.*;
 import com.dut.backend.dto.response.CredentialResponse;
 import com.dut.backend.entity.Account;
 import com.dut.backend.entity.Enum.AccountRole;
@@ -13,6 +11,7 @@ import com.dut.backend.entity.RegisterOTP;
 import com.dut.backend.repository.AccountRepository;
 import com.dut.backend.repository.RegisterOtpRepository;
 import com.dut.backend.service.AuthService;
+import com.dut.backend.service.CloudinaryService;
 import com.dut.backend.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -21,8 +20,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final MailService mailService;
     private final RegisterOtpRepository registerOtpRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     public CredentialResponse login(LoginRequest loginRequest) throws BadRequestException {
@@ -113,6 +115,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(registerOtp.getPassword())
                 .fullName(registerOtp.getFullName())
                 .role(AccountRole.CUSTOMER)
+                .avatarUrl("http://res.cloudinary.com/duwta75bz/image/upload/v1747751582/agfpejzvtzz5cuhu3pnf.jpg")  //avatar default
                 .isActive(true)
                 .build();
 
@@ -123,6 +126,42 @@ public class AuthServiceImpl implements AuthService {
         registerOtpRepository.save(registerOtp);
 
         return account;
+    }
+
+    @Override
+    public Account updateAccountInfo(UpdateAccountInfoRequest request) throws BadRequestException {
+        Account foundedAccount = accountRepository.findById(request.getAccountId()).orElseThrow(() -> new BadRequestException("Not Found Account To Update Information !!"));
+        foundedAccount.setEmail(request.getEmail());
+        foundedAccount.setFullName(request.getFullName());
+        foundedAccount.setAddress(request.getAddress());
+        foundedAccount.setPhoneNumber(request.getPhoneNumber());
+        foundedAccount.setGender(request.isGender());
+        foundedAccount.setBirthDate(request.getBirthDate());
+        return accountRepository.save(foundedAccount);
+    }
+
+    @Override
+    public Account updateAccountAvatar(MultipartFile avatar, Long accountId) throws BadRequestException {
+        Account foundedAccount = accountRepository.findById(accountId).orElseThrow(() -> new BadRequestException("Not Found Account To Update Avatar !!"));
+        String avatarUrl = cloudinaryService.uploadFile(avatar);
+        foundedAccount.setAvatarUrl(avatarUrl);
+
+        return accountRepository.save(foundedAccount);
+    }
+
+    @Override
+    public Account updatePassword(UpdatePasswordRequest request) throws BadRequestException {
+        Account foundedAccount = accountRepository.findById(request.getAccountId()).orElseThrow(() -> new BadRequestException("Not Found Account To Update Password !!"));
+        if (!passwordEncoder.matches(request.getPassword(), foundedAccount.getPassword())) {
+            throw new BadRequestException("Wrong password !!");
+        }
+        else if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BadRequestException("Confirm password does not match !!");
+        }
+        else if (!passwordEncoder.matches(request.getNewPassword(), foundedAccount.getPassword())) {
+            foundedAccount.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+        return accountRepository.save(foundedAccount);
     }
 
     private String generateOtp() {

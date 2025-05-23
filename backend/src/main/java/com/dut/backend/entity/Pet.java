@@ -25,7 +25,7 @@ public class Pet extends EntityBase {
     private String behavior;
     private Integer ferocious;
     private Integer space;
-    private Integer group;
+    private Integer petGroup;
     private String description;
     @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER)
     @JsonManagedReference

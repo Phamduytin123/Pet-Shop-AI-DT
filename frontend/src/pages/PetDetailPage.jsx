@@ -105,7 +105,7 @@ const PetDetailPage = () => {
                   style={{
                     width: "400px",
                     height: "500px",
-                    objectFit: "cover",
+                    objectFit: "contain",
                     borderRadius: "8px",
                   }}
                 />

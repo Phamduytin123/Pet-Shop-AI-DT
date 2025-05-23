@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,7 +25,8 @@ public class AccountInfo  extends AbstractDTO<Account> {
     private AccountRole role;
     private String phoneNumber;
     private String address;
-
+    private LocalDate birthDate;
+    private boolean gender;
     @Override
     public AccountInfo fromEntity(Account entity) {
         return AccountInfo.builder()
@@ -34,6 +37,8 @@ public class AccountInfo  extends AbstractDTO<Account> {
                 .address(entity.getAddress())
                 .role(entity.getRole())
                 .avatar(entity.getAvatarUrl())
+                .birthDate(entity.getBirthDate())
+                .gender(entity.isGender())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .deletedAt(entity.getDeletedAt())

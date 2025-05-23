@@ -19,12 +19,26 @@ const LoginForm = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (state?.account) {
-      navigate("/"); // nếu đã đăng nhập thì redirect
+      switch (state.account?.role) {
+        case ROLE_CUSTOMER:
+          console.log("cus nene");
+          navigate("/");
+          break;
+        case ROLE_SELLER:
+          console.log("seller nene");
+          navigate("/");
+          break;
+        case ROLE_ADMIN:
+          console.log("admin nene");
+          navigate("/admin/dashboard");
+          // navigate("/pets");
+          break;
+      }
     }
   }, [state, navigate]);
   const onFinish = async (values) => {
     console.log("Form values: ", values);
-    // Gửi dữ liệu login đến server tại đây (fetch/axios)
+
     try {
       const { email, password } = values;
       const credentials = {
@@ -36,23 +50,26 @@ const LoginForm = () => {
       const { is_success } = await authService.login(credentials);
       if (is_success) {
         const { data } = await authService.getAccountInfo();
-        console.log(data);
+        console.log("login", data);
         showSuccessNotification("Login success", "Login success");
         dispatch({ type: ReducerCases.SET_ACCOUNT_INFO, data });
+        console.log("role:", data.role);
 
         switch (data?.role) {
           case ROLE_CUSTOMER:
+            console.log("cus nene");
             navigate("/");
             break;
           case ROLE_SELLER:
+            console.log("seller nene");
             navigate("/");
             break;
           case ROLE_ADMIN:
-            navigate("/");
+            console.log("admin nene");
+            navigate("/admin/dashboard");
+            // navigate("/pets");
             break;
         }
-
-        navigate("/");
       }
     } catch (error) {
       showErrorNotification(

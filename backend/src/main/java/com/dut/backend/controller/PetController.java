@@ -1,15 +1,22 @@
 package com.dut.backend.controller;
 
+import com.dut.backend.annotation.auth.CurrentAccount;
+import com.dut.backend.annotation.auth.PreAuthorizeAllWithoutCustomer;
 import com.dut.backend.common.model.AbstractResponse;
 import com.dut.backend.common.util.CommonUtils;
 import com.dut.backend.dto.request.AddPetDetailRequest;
+import com.dut.backend.dto.request.AddPetRequest;
+import com.dut.backend.dto.request.UpdatePetRequest;
+import com.dut.backend.entity.Account;
 import com.dut.backend.entity.Pet;
 import com.dut.backend.entity.PetDetail;
 import com.dut.backend.repository.PetRepository;
 import com.dut.backend.service.PetDetailService;
 import com.dut.backend.service.PetService;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.transaction.reactive.AbstractReactiveTransactionManager;
@@ -108,6 +115,38 @@ public class PetController {
             return ResponseEntity.ok(AbstractResponse.successWithoutMeta(pet));
         } catch (Exception e) {
             // Nếu có lỗi xảy ra trong quá trình gửi yêu cầu hoặc nhận kết quả
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PostMapping("/add")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> addPet(@RequestBody @Valid AddPetRequest request) {
+        try {
+            var result = petService.addPetInfo(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/addImage")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> addImage(@RequestParam("petId")Long petId,
+                                                         @RequestParam("file") MultipartFile avatar) {
+        try {
+            var result = petService.addImagePet(avatar,petId);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/update")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> updatePet(@RequestBody @Valid UpdatePetRequest request) {
+        try {
+            var result = petService.updatePetInfo(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        }catch (BadRequestException e) {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }

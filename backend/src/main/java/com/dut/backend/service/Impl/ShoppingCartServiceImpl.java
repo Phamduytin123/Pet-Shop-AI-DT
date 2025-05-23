@@ -9,6 +9,7 @@ import com.dut.backend.repository.ItemBaseRepository;
 import com.dut.backend.repository.ShoppingCartRepository;
 import com.dut.backend.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +21,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final AccountRepository accountRepository;
     private final ItemBaseRepository itemBaseRepository;
     @Override
-    public ShoppingCart addShoppingCart(AddCartRequest addCartRequest, Account account) {
+    public ShoppingCart addShoppingCart(AddCartRequest addCartRequest, Account account) throws BadRequestException {
         ItemBase item = itemBaseRepository.findById(addCartRequest.getItemId())
                 .orElseThrow(() -> new RuntimeException("Item not found"));
         ShoppingCart foundedCart = shoppingCartRepository.findByAccountIdAndItemId(account.getId(),item.getId()).orElse(null);
         if (foundedCart != null) {
-            throw new RuntimeException("Item was added to shopping cart");
+            throw new BadRequestException("Item was added to shopping cart !!!");
         }
         ShoppingCart cart = ShoppingCart.builder()
                 .account(account)

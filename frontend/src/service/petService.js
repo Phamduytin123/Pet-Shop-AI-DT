@@ -32,5 +32,37 @@ const petService = {
       throw error;
     }
   },
+  addPetInfo: async (data) => {
+    const response = await apiClient.post("/pets/add", data);
+    if (response.is_success) {
+      return response;
+    } else {
+      throw new Error("Add New Pet Failed!");
+    }
+  },
+  addPetImage: async(file, petId) =>{
+    const formData = new FormData();
+        formData.append("file", file);
+        formData.append("petId",petId)
+        const response = await apiClient.put("/pets/addImage", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Add Pet Image Failed!");
+        }
+  },
+  updatePetInfo: async (data) =>{
+    const response = await apiClient.put("/pets/update", data);
+    if (response.is_success) {
+        return response;
+    } else {
+        throw new Error("Update Pet Information Failed!");
+    }
+  },
 }
 export default petService
