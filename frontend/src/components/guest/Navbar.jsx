@@ -18,10 +18,8 @@ const Navbar = () => {
   const account = state?.account;
   const pathToKeyMap = {
     "/": "about",
-    "/discovery": "discovery",
     "/pets": "shop",
-    "/contact": "contact",
-    "/course": "course",
+    "/petProducts": "Products",
     "/shopping-carts": "cart",
     "/register": "register",
     "/login": "login",
@@ -65,24 +63,14 @@ const Navbar = () => {
       onClick: () => navigate("/"),
     },
     {
-      key: "discovery",
-      label: "Discovery",
-      onClick: () => navigate("/discovery"),
-    },
-    {
       key: "shop",
       label: "Shop",
       onClick: () => navigate("/pets"),
     },
     {
-      key: "contact",
-      label: "Contact",
-      onClick: () => navigate("/contact"),
-    },
-    {
-      key: "course",
-      label: "Course",
-      onClick: () => navigate("/course"),
+      key: "Products",
+      label: "Products",
+      onClick: () => navigate("/petProducts"),
     },
     {
       key: "cart",

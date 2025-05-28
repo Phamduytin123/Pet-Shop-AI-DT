@@ -1,19 +1,12 @@
-// src/components/ProductList.jsx
-import { Typography } from "antd";
+// PetCarousel.jsx
 import Slider from "react-slick";
 import PetCard from "./productlist/PetCard";
 import { PrevArrow, NextArrow } from "./CustomArrows"; // 👈
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import PetProductCard from "./productlist/PetProductCard";
 // import "../../assets/scss/PetCarousel.scss";
-const products = [
-  { id: 1, name: "Thức ăn cho chó", price: "150.000đ" },
-  { id: 2, name: "Sữa tắm cho mèo", price: "80.000đ" },
-  { id: 3, name: "Chuồng cho hamster", price: "300.000đ" },
-];
-
-const ProductList = ({ products }) => {
+import { Card, Col, Row, Typography } from "antd";
+const PetCarousel = ({ pets }) => {
   const settings = {
     dots: true,
     infinite: false,
@@ -24,6 +17,7 @@ const ProductList = ({ products }) => {
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
   };
+
   return (
     <div style={{ paddingLeft: "5%", paddingRight: "5%" }}>
       <Typography.Title
@@ -35,12 +29,12 @@ const ProductList = ({ products }) => {
           color: "#410075",
         }}
       >
-        Care For Your Pet
+        Discover Our Cat Collections
       </Typography.Title>
       <Slider {...settings}>
-        {products.map((product) => (
-          <div key={product.id} style={{ padding: "0 8px" }}>
-            <PetProductCard petProduct={product} />
+        {pets.map((pet) => (
+          <div key={pet.id} style={{ padding: "0 8px" }}>
+            <PetCard pet={pet} />
           </div>
         ))}
       </Slider>
@@ -48,4 +42,4 @@ const ProductList = ({ products }) => {
   );
 };
 
-export default ProductList;
+export default PetCarousel;

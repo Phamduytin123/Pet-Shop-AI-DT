@@ -29,5 +29,23 @@ const orderService = {
           throw error;
         }
       },
+      getListOrderAll: async ()=>{
+        try {
+          const response = await apiClient.get(`/orders/alls`);
+          return response; 
+        } catch (error) {
+          console.error("Error fetching orders all:", error);
+          throw error;
+        }
+      },
+      updateOrderStatus: async (data)=>{
+        try {
+          const response = await apiClient.put(`/orders/updateStatus`, data);
+          return response; 
+        } catch (error) {
+          console.error("Error fetching orders all:", error);
+          throw error;
+        }
+      }
 }
 export default orderService

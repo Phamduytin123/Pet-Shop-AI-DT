@@ -33,11 +33,15 @@ const AdminNavbar = () => {
   const userMenu = (
     <Menu
       items={[
-        {
-          key: "profile",
-          label: "My Profile",
-          onClick: () => navigate("/profile"),
-        },
+        ...(account?.role === "SELLER"
+          ? [
+              {
+                key: "profile",
+                label: "My Profile",
+                onClick: () => navigate("/seller/profile"),
+              },
+            ]
+          : []),
         {
           key: "logout",
           label: "Logout",

@@ -9,24 +9,21 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { useStateContext } from "../../context/StateContext";
 const { Item } = Menu;
 
 const AdminMenu = () => {
+  const [state, dispatch] = useStateContext();
+  const account = state?.account;
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Map key tương ứng với các đường dẫn (bạn có thể tùy chỉnh theo route app bạn)
-  // Ví dụ: /admin/dashboard => key "dashboard", /admin/pets => "pets", ...
-  // Nếu url phức tạp hơn thì có thể parse location.pathname
   const pathToKeyMap = {
     "/admin/dashboard": "dashboard",
     "/admin/pets": "pets",
-    // "/admin/pets/add": "pets",
-    "/admin/pet-products": "pet-products",
+    "/admin/petProducts": "petProducts",
     "/admin/accounts": "accounts",
     "/admin/orders": "orders",
-    "/admin/venue": "venue",
   };
 
   // Lấy key theo path hiện tại, mặc định là dashboard
@@ -62,17 +59,16 @@ const AdminMenu = () => {
       <Item key="pets" icon={<AppstoreOutlined />}>
         Pets
       </Item>
-      <Item key="pet-products" icon={<ShoppingOutlined />}>
+      <Item key="petProducts" icon={<ShoppingOutlined />}>
         Pet Products
       </Item>
-      <Item key="accounts" icon={<UserOutlined />}>
-        Accounts
-      </Item>
+      {account?.role == "ADMIN" && (
+        <Item key="accounts" icon={<UserOutlined />}>
+          Accounts
+        </Item>
+      )}
       <Item key="orders" icon={<ShoppingCartOutlined />}>
         Orders
-      </Item>
-      <Item key="venue" icon={<EnvironmentOutlined />}>
-        Venue
       </Item>
     </Menu>
   );

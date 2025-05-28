@@ -61,7 +61,31 @@ const authService = {
         } else {
             throw new Error("Update Password Failed!");
         }
-    }
+    },
+    getAllAccount: async ()=>{
+        const response = await apiClient.get("/auth/alls");
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Get All Account Failed!");
+        }
+    },
+    updateRole: async (data) => {
+        const response = await apiClient.put("/auth/updateRole", data);
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Update Role Failed!");
+        }
+    },
+    updateActivate: async (data) => {
+        const response = await apiClient.put("/auth/updateActive", data);
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Update Activate Failed!");
+        }
+    },
 
 }
  export default authService

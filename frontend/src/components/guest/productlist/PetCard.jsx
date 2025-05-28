@@ -1,13 +1,27 @@
 // components/PetCard.js
 import React from "react";
-import { Card } from "antd";
+import { Card, Progress, Typography, Divider } from "antd";
 import { useNavigate } from "react-router-dom";
+const { Text } = Typography;
 const PetCard = ({ pet }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/pets/${pet.breed}`);
   };
+
+  const renderStat = (label, value) => (
+    <div style={{ marginBottom: 8 }}>
+      <Text strong>{label}</Text>
+      <Progress
+        percent={value * 10}
+        showInfo={false}
+        strokeColor="#6a0dad"
+        trailColor="#d9d9d9"
+      />
+    </div>
+  );
+
   return (
     <Card
       hoverable
@@ -35,7 +49,15 @@ const PetCard = ({ pet }) => {
         </div>
       }
     >
-      <Card.Meta title={pet.name} description={`Giá: ${pet.breed} VND`} />
+      <Card.Meta title={pet.name} style={{ marginBottom: 15 }} />
+      {/* <Card.Meta
+        title="Information"
+        style={{ marginTop: 12, marginBottom: 8 }}
+      /> */}
+      {renderStat("Difficulty in raise", pet.difficulty)}
+      {renderStat("Ferocious", pet.ferocious)}
+      {renderStat("Space", pet.space)}
+      {renderStat("Group", pet.petGroup)}
     </Card>
   );
 };

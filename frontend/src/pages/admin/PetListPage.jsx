@@ -20,7 +20,7 @@ import AdminMenu from "../../components/admin/AdminMenu";
 const AdminPetListPage = () => {
   const [pets, setPets] = useState([]);
   const navigate = useNavigate();
-
+  const [filteredPets, setFilteredPets] = useState([]);
   // AI modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -31,6 +31,7 @@ const AdminPetListPage = () => {
       try {
         const res = await petService.getAllPet();
         setPets(res.data);
+        setFilteredPets(res.data);
       } catch (error) {
         console.log(error);
       }
@@ -95,7 +96,19 @@ const AdminPetListPage = () => {
               {/* Giữ lại Search bar để bạn có thể chỉnh lại logic sau */}
               <Search
                 placeholder="Find pet"
-                onSearch={(value) => console.log("Search:", value)}
+                onSearch={async (value) => {
+                  try {
+                    if (!value || value.trim() === "") {
+                      setFilteredPets(pets); // reset về tất cả nếu không có keyword
+                      return;
+                    }
+                    const data = await petService.searchPet(value);
+                    setFilteredPets(data.data);
+                  } catch (err) {
+                    message.error("Tìm kiếm thất bại!");
+                    console.error(err);
+                  }
+                }}
                 style={{ width: "700px" }}
                 className="search-bar"
               />
@@ -178,7 +191,7 @@ const AdminPetListPage = () => {
           </div>
           <Content style={{ background: "#fff", padding: 24 }}>
             <h2>Pet list</h2>
-            <PetList pets={pets} />
+            <PetList pets={filteredPets} />
           </Content>
         </Layout>
       </Layout>

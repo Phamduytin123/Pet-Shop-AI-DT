@@ -113,8 +113,20 @@ const PetListPage = () => {
           >
             <div style={{ display: "flex", gap: "5em" }}>
               <Search
-                placeholder="Tìm kiếm thú cưng"
-                onSearch={(value) => console.log("Search:", value)}
+                placeholder="Find pet by name"
+                onSearch={async (value) => {
+                  try {
+                    if (!value || value.trim() === "") {
+                      setFilteredPets(pets); // reset về tất cả nếu không có keyword
+                      return;
+                    }
+                    const data = await petService.searchPet(value);
+                    setFilteredPets(data.data);
+                  } catch (err) {
+                    message.error("Tìm kiếm thất bại!");
+                    console.error(err);
+                  }
+                }}
                 style={{ width: "700px" }}
                 className="search-bar"
               />
@@ -123,19 +135,19 @@ const PetListPage = () => {
               </Button>
               {/* Modal */}
               <Modal
-                title="Tìm kiếm thú cưng bằng hình ảnh"
+                title="Find cat pet by image"
                 open={isModalOpen}
                 onCancel={handleCancel}
                 footer={[
                   <Button key="cancel" onClick={handleCancel}>
-                    Hủy
+                    Cancel
                   </Button>,
                   <Button
                     key="search"
                     type="primary"
                     onClick={handleSearchImage}
                   >
-                    Tìm kiếm
+                    Find
                   </Button>,
                 ]}
               >
@@ -159,10 +171,10 @@ const PetListPage = () => {
                         <UploadOutlined />
                       </p>
                       <p className="ant-upload-text">
-                        Kéo ảnh vào đây hoặc click để chọn
+                        Drop or click to select image
                       </p>
                       <p className="ant-upload-hint">
-                        Chỉ hỗ trợ PNG, JPG, JPEG, WEBP
+                        Only support for PNG, JPG, JPEG, WEBP
                       </p>
                     </>
                   )}
@@ -177,16 +189,16 @@ const PetListPage = () => {
                     onClick={() => handleClickCardPredict(predictedPet.breed)}
                   >
                     <p>
-                      <strong>Giống:</strong> {predictedPet.breed}
+                      <strong>Breed:</strong> {predictedPet.breed}
                     </p>
                     <p>
-                      <strong>Độ khó chăm:</strong> {predictedPet.difficulty}
+                      <strong>Difficulty:</strong> {predictedPet.difficulty}
                     </p>
                     <p>
-                      <strong>Hành vi:</strong> {predictedPet.behavior}
+                      <strong>Behavior:</strong> {predictedPet.behavior}
                     </p>
                     <p>
-                      <strong>Mô tả:</strong> {predictedPet.description}
+                      <strong>Description:</strong> {predictedPet.description}
                     </p>
                   </Card>
                 )}
@@ -194,7 +206,7 @@ const PetListPage = () => {
             </div>
           </div>
           <Content style={{ background: "#fff", padding: 24 }}>
-            <Title level={3}>Danh sách thú cưng</Title>
+            <Title level={3}>Pet list</Title>
             <PetList pets={filteredPets} />
           </Content>
         </Layout>

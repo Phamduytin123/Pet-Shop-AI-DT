@@ -64,5 +64,16 @@ const petService = {
         throw new Error("Update Pet Information Failed!");
     }
   },
+  searchPet: async (keyword)=>{
+    const response = await apiClient.get("/pets/search", {
+      params: { keyword }
+    });
+    // return response;
+    if (response.is_success) {
+        return response;
+    } else {
+        throw new Error("Search Pet Information Failed!");
+    }
+  }
 }
 export default petService

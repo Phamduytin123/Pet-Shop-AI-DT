@@ -1,17 +1,16 @@
 // components/PetList.js
 import React, { useState } from "react";
 import { Row, Col, Pagination } from "antd";
-import PetCard from "./PetCard";
+import PetProductCard from "./PetProductCard";
 
-const PetList = ({ pets }) => {
-  // if (!Array.isArray(pets)) {
-  //   return <div>No Pet To View List</div>;
-  // }
+const PetProductList = ({ petDetails }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
+  //   console.log(petDetails);
+
   const start = (currentPage - 1) * pageSize;
-  const currentPets = pets.slice(start, start + pageSize);
+  const currentpetDetails = petDetails.slice(start, start + pageSize);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -23,8 +22,8 @@ const PetList = ({ pets }) => {
           justifyContent: "flex-start",
         }}
       >
-        {currentPets.map((pet) => (
-          <PetCard key={pet.id} pet={pet} />
+        {currentpetDetails.map((pet) => (
+          <PetProductCard key={pet.id} petProduct={pet} />
         ))}
       </div>
 
@@ -32,7 +31,7 @@ const PetList = ({ pets }) => {
         <Pagination
           current={currentPage}
           pageSize={pageSize}
-          total={pets.length}
+          total={petDetails.length}
           onChange={setCurrentPage}
         />
       </div>
@@ -40,4 +39,4 @@ const PetList = ({ pets }) => {
   );
 };
 
-export default PetList;
+export default PetProductList;

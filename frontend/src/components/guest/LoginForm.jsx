@@ -26,7 +26,7 @@ const LoginForm = () => {
           break;
         case ROLE_SELLER:
           console.log("seller nene");
-          navigate("/");
+          navigate("/admin/dashboard");
           break;
         case ROLE_ADMIN:
           console.log("admin nene");
