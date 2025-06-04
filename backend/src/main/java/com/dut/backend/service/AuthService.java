@@ -7,6 +7,8 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 public interface AuthService {
     CredentialResponse login(LoginRequest loginRequest) throws BadRequestException;
@@ -20,4 +22,8 @@ public interface AuthService {
     Account updateAccountAvatar(MultipartFile avatar, Long accountId) throws BadRequestException;
 
     Account updatePassword(UpdatePasswordRequest request) throws BadRequestException;
+
+    List<Account> getAllAccount();
+    Account updateAccountRole(UpdateAccountRoleRequest request) throws BadRequestException;
+    Account updateAccountActive(UpdateActivateRequest request) throws BadRequestException;
 }

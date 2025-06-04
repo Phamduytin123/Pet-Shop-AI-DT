@@ -15,4 +15,5 @@ public interface PetService {
     Pet addPetInfo(AddPetRequest request) throws BadRequestException;
     Pet addImagePet(MultipartFile avatar, Long petId) throws BadRequestException;
     Pet updatePetInfo(UpdatePetRequest request) throws BadRequestException;
+    List<Pet> searchPetsByName(String keyword);
 }

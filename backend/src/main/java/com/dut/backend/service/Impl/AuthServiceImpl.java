@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -162,6 +163,29 @@ public class AuthServiceImpl implements AuthService {
             foundedAccount.setPassword(passwordEncoder.encode(request.getNewPassword()));
         }
         return accountRepository.save(foundedAccount);
+    }
+
+    @Override
+    public List<Account> getAllAccount() {
+        return accountRepository.findAll();
+    }
+
+    @Override
+    public Account updateAccountRole(UpdateAccountRoleRequest request) throws BadRequestException {
+        Account foundAccount = accountRepository.findById(request.getAccountId()).orElseThrow(
+                () -> new BadRequestException("Not Found Account To Update Role !!")
+        );
+        foundAccount.setRole(request.getRole());
+        return accountRepository.save(foundAccount);
+    }
+
+    @Override
+    public Account updateAccountActive(UpdateActivateRequest request) throws BadRequestException {
+        Account foundAccount = accountRepository.findById(request.getAccountId()).orElseThrow(
+                () -> new BadRequestException("Not Found Account To Update isActive !!")
+        );
+        foundAccount.setActive(request.isActive());
+        return accountRepository.save(foundAccount);
     }
 
     private String generateOtp() {

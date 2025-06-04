@@ -1,9 +1,6 @@
 package com.dut.backend.service.Impl;
 
-import com.dut.backend.dto.request.AddCartRequest;
-import com.dut.backend.dto.request.CreateOrderRequest;
-import com.dut.backend.dto.request.MomoItemDTO;
-import com.dut.backend.dto.request.MomoRequestDTO;
+import com.dut.backend.dto.request.*;
 import com.dut.backend.dto.response.MomoExtraDataDTO;
 import com.dut.backend.dto.response.MomoResponseDTO;
 import com.dut.backend.entity.*;
@@ -197,5 +194,19 @@ public class OrderServiceImpl implements OrderService {
             System.out.println("Lỗi khi xử lý callback: " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public List<Order> getAllOrdersSortedByCreatedAtDesc() {
+        return orderRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public Order UpdateOrderStatus(UpdateOrderStatusRequest request) throws Exception {
+        Order foundOrder = orderRepository.findById(request.getOrderId()).orElseThrow(
+                () -> new BadRequestException("Can't find Order to update status")
+        );
+        foundOrder.setStatus(request.getStatus());
+        return orderRepository.save(foundOrder);
     }
 }

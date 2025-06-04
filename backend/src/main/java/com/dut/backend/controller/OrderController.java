@@ -1,9 +1,12 @@
 package com.dut.backend.controller;
 
 import com.dut.backend.annotation.auth.CurrentAccount;
+import com.dut.backend.annotation.auth.PreAuthorizeAll;
+import com.dut.backend.annotation.auth.PreAuthorizeAllWithoutCustomer;
 import com.dut.backend.annotation.auth.PreAuthorizeCustomer;
 import com.dut.backend.common.model.AbstractResponse;
 import com.dut.backend.dto.request.CreateOrderRequest;
+import com.dut.backend.dto.request.UpdateOrderStatusRequest;
 import com.dut.backend.entity.Account;
 import com.dut.backend.entity.Order;
 import com.dut.backend.service.OrderDetailService;
@@ -30,7 +33,7 @@ public class OrderController {
         ));
     }
     @GetMapping("/{orderId}")
-    @PreAuthorizeCustomer
+    @PreAuthorizeAll
     public ResponseEntity<AbstractResponse> getOrderDetail(@PathVariable Long orderId) {
         System.out.println(orderId);
         return ResponseEntity.ok(AbstractResponse.successWithoutMeta(
@@ -56,6 +59,22 @@ public class OrderController {
             return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
         }
         catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @GetMapping("/alls")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> getAllOrders() {
+        var result = orderService.getAllOrdersSortedByCreatedAtDesc();
+        return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+    }
+    @PutMapping("/updateStatus")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> updateOrderStatus(@RequestBody UpdateOrderStatusRequest request) throws Exception {
+        try {
+            var result = orderService.UpdateOrderStatus(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        } catch (Exception e) {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }

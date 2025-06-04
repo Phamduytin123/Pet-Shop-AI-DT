@@ -12,4 +12,5 @@ public interface PetRepository  extends JpaRepository<Pet, Long> {
     @Query("SELECT  p.breed FROM Pet p ")
     List<String> findBreeds();
     Pet findByBreed(String breed);
+    List<Pet> findByNameContainingIgnoreCase(String keyword);
 }

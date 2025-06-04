@@ -102,4 +102,9 @@ public class PetServiceImpl  implements PetService {
         foundPet.setDescription(request.getDescription());
         return petRepository.save(foundPet);
     }
+
+    @Override
+    public List<Pet> searchPetsByName(String keyword) {
+        return petRepository.findByNameContainingIgnoreCase(keyword);
+    }
 }

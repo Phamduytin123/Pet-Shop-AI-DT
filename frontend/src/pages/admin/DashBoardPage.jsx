@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Statistic, Table } from "antd";
+import { Card, Col, Row, Statistic, Table, Select } from "antd";
 import {
   UserOutlined,
   ShoppingOutlined,
@@ -18,13 +18,14 @@ import {
 import AdminLayout from "../../layout/AdminLayout";
 import orderService from "../../service/orderService";
 import authService from "../../service/authService";
+import { startOfWeek, format, startOfMonth } from "date-fns";
 
 const DashboardPage = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
-
+  const [statisticType, setStatisticType] = useState("day");
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -48,31 +49,9 @@ const DashboardPage = () => {
         );
         setTotalRevenue(revenue);
 
-        const revenueByDate = {};
-        completedOrders.forEach((order) => {
-          const date = new Date(order.createdAt).toLocaleDateString("en-GB");
-          if (!revenueByDate[date]) {
-            revenueByDate[date] = { orders: 0, revenue: 0 };
-          }
-          revenueByDate[date].orders += 1;
-          revenueByDate[date].revenue += order.totalPrice || 0;
-        });
+        const groupedData = groupOrdersByType(completedOrders, statisticType);
 
-        // const table = Object.entries(revenueByDate).map(
-        //   ([date, info], idx) => ({
-        //     key: idx + 1,
-        //     date,
-        //     orders: info.orders,
-        //     revenue:
-        //       info.revenue.toLocaleString("en-US", {
-        //         style: "currency",
-        //         currency: "VND",
-        //       }) || "₫0",
-        //   })
-        // );
-
-        // setTableData(table);
-        const sortedTable = Object.entries(revenueByDate)
+        const sortedTable = Object.entries(groupedData)
           .map(([date, info], idx) => ({
             key: idx + 1,
             date,
@@ -83,10 +62,18 @@ const DashboardPage = () => {
                 currency: "VND",
               }) || "₫0",
           }))
-          // Sắp xếp theo ngày, vì date ở dạng "dd/mm/yyyy" nên chuyển thành Date để so sánh đúng
           .sort((a, b) => {
-            const [dayA, monthA, yearA] = a.date.split("/");
-            const [dayB, monthB, yearB] = b.date.split("/");
+            const [dayA, monthA, yearA] = a.date.includes("/")
+              ? a.date.split("/").length === 3
+                ? a.date.split("/")
+                : ["01", ...a.date.split("/")] // "MM/yyyy" → "01/MM/yyyy"
+              : ["01", "01", a.date]; // fallback
+            const [dayB, monthB, yearB] = b.date.includes("/")
+              ? b.date.split("/").length === 3
+                ? b.date.split("/")
+                : ["01", ...b.date.split("/")]
+              : ["01", "01", b.date];
+
             const dateA = new Date(`${yearA}-${monthA}-${dayA}`);
             const dateB = new Date(`${yearB}-${monthB}-${dayB}`);
             return dateA - dateB;
@@ -99,7 +86,33 @@ const DashboardPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [statisticType]);
+
+  const groupOrdersByType = (orders, type) => {
+    const result = {};
+
+    orders.forEach((order) => {
+      const createdAt = new Date(order.createdAt);
+      let key = "";
+
+      if (type === "day") {
+        key = format(createdAt, "dd/MM/yyyy");
+      } else if (type === "week") {
+        key = format(startOfWeek(createdAt, { weekStartsOn: 1 }), "dd/MM/yyyy");
+      } else if (type === "month") {
+        key = format(startOfMonth(createdAt), "MM/yyyy");
+      }
+
+      if (!result[key]) {
+        result[key] = { orders: 0, revenue: 0 };
+      }
+
+      result[key].orders += 1;
+      result[key].revenue += order.totalPrice || 0;
+    });
+
+    return result;
+  };
 
   const summaryData = [
     {
@@ -132,7 +145,7 @@ const DashboardPage = () => {
 
   const columns = [
     {
-      title: "Date",
+      title: "Time",
       dataIndex: "date",
       key: "date",
     },
@@ -165,6 +178,19 @@ const DashboardPage = () => {
               </Card>
             </Col>
           ))}
+        </Row>
+
+        <Row justify="end" style={{ marginBottom: 16 }}>
+          <Select
+            defaultValue="day"
+            style={{ width: 200 }}
+            onChange={(value) => setStatisticType(value)}
+            options={[
+              { value: "day", label: "By Date" },
+              { value: "week", label: "By Week" },
+              { value: "month", label: "By Month" },
+            ]}
+          />
         </Row>
 
         <Row gutter={16} style={{ marginTop: 24 }}>

@@ -150,4 +150,8 @@ public class PetController {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
+    @GetMapping("/search")
+    public ResponseEntity<AbstractResponse> searchPets(@RequestParam String keyword) {
+        return ResponseEntity.ok(AbstractResponse.successWithoutMeta(petService.searchPetsByName(keyword)));
+    }
 }

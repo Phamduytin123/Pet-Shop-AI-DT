@@ -1,8 +1,6 @@
 package com.dut.backend.controller;
 
-import com.dut.backend.annotation.auth.CurrentAccount;
-import com.dut.backend.annotation.auth.PreAuthorizeAll;
-import com.dut.backend.annotation.auth.PreAuthorizeCustomer;
+import com.dut.backend.annotation.auth.*;
 import com.dut.backend.common.model.AbstractResponse;
 import com.dut.backend.config.JwtUtil;
 import com.dut.backend.dto.request.*;
@@ -84,6 +82,37 @@ public class AuthController {
             System.out.println("controler "+updatedAccount);
             return ResponseEntity.ok(AbstractResponse.successWithoutMeta(updatedAccount));
         } catch (BadRequestException e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @GetMapping("/alls")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> getAllAccounts (){
+        try {
+            var result = authService.getAllAccount();
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/updateRole")
+    public ResponseEntity<AbstractResponse> updateRole (@RequestBody UpdateAccountRoleRequest request){
+        try {
+            var result = authService.updateAccountRole(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/updateActive")
+    public ResponseEntity<AbstractResponse> updateActivate (@RequestBody UpdateActivateRequest request){
+        try {
+            var result = authService.updateAccountActive(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        }
+        catch (Exception e) {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
