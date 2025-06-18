@@ -113,19 +113,37 @@ const OrderPage = () => {
             style={{ width: "100%", marginBottom: 32 }}
             gap={35}
           >
-            <Card title="Account Information" style={{ flex: 1 }}>
+            <Card
+              title="Account Information"
+              style={{ flex: 1, background: "#FBF6FF" }}
+            >
               <h3>{account?.full_name}</h3>
               <p>Email: {account?.email}</p>
               <p>Phone: {account?.phone_number}</p>
-              <Button>Information update</Button>
+              <Button
+                style={{ background: "#410075", color: "#fff" }}
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              >
+                Information update
+              </Button>
             </Card>
 
-            <Card title="Order Address" style={{ flex: 1 }}>
+            <Card
+              title="Order Address"
+              style={{ flex: 1, background: "#FBF6FF" }}
+              onClick={() => {
+                navigate("/profile");
+              }}
+            >
               <h3>{account?.full_name}</h3>
               <p>Address: {account?.address}</p>
               <p>Phone: {account?.phone_number}</p>
               <p>Email: {account?.email}</p>
-              <Button>Address update</Button>
+              <Button style={{ background: "#410075", color: "#fff" }}>
+                Address update
+              </Button>
             </Card>
 
             <div
@@ -188,7 +206,7 @@ const OrderPage = () => {
           </Flex>
 
           <Col span={24}>
-            <Card title="My Orders">
+            <Card title="My Orders" style={{ background: "#FBF6FF" }}>
               <Table
                 columns={columns}
                 dataSource={orders}

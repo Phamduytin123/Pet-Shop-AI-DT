@@ -186,7 +186,7 @@ const OrderDetailPage = () => {
                 style={{
                   marginTop: 40,
                   padding: 24,
-                  backgroundColor: "#f9f9f9",
+                  backgroundColor: "#FBF6FF",
                   borderRadius: 8,
                   boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)",
                 }}

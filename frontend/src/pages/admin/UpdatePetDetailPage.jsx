@@ -11,6 +11,7 @@ import {
   Upload,
   message,
   Radio,
+  Modal,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -95,13 +96,52 @@ const UpdatePetDetailPage = () => {
       console.error(error);
     }
   };
-
+  const handleDelete = async () => {
+    try {
+      // Hiển thị hộp thoại xác nhận
+      Modal.confirm({
+        title: "Are you sure you want to delete this pet detail?",
+        content: "This action cannot be undone.",
+        okText: "Yes, delete it",
+        okType: "danger",
+        cancelText: "No, keep it",
+        onOk: async () => {
+          try {
+            await petDetailService.deletePetDetailById(petDetailId);
+            showSuccessNotification(
+              "Deleted",
+              "Pet detail deleted successfully"
+            );
+            navigate(`/admin/pets/${breed}`);
+          } catch (error) {
+            showErrorNotification("Error", "Failed to delete pet detail");
+            console.error(error);
+          }
+        },
+      });
+    } catch (error) {
+      console.error("Error showing confirmation:", error);
+    }
+  };
   return (
     <AdminLayout>
       <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
         <Card
-          style={{ maxWidth: 1300, width: "100%", backgroundColor: "#f2e2ff" }}
+          style={{
+            maxWidth: 1300,
+            width: "100%",
+            backgroundColor: "#f2e2ff",
+            position: "relative",
+          }}
         >
+          <Button
+            type="primary"
+            danger
+            onClick={handleDelete}
+            style={{ position: "absolute", top: 16, right: 16 }}
+          >
+            Delete
+          </Button>
           <Title level={4}>Update Pet Detail</Title>
           <Row gutter={24}>
             {/* Upload image */}

@@ -74,6 +74,16 @@ const petService = {
     } else {
         throw new Error("Search Pet Information Failed!");
     }
+  },
+  deletePetById: async (petId) =>{
+    const response = await apiClient.delete("/pets/delete",{
+        params: { petId }
+    })
+    if (response.is_success) {
+        return response;
+    } else {
+        throw new Error("Delete Failed!");
+    }
   }
 }
 export default petService

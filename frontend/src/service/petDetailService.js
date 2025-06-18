@@ -39,5 +39,15 @@ const petDetailService = {
             throw new Error("Update PetDetail Information Failed!");
         }
       },
+      deletePetDetailById: async (petDetailId) =>{
+        const response = await apiClient.delete("/pet-detail/delete",{
+            params: { petDetailId }
+        })
+        if (response.is_success) {
+            return response;
+        } else {
+            throw new Error("Delete PetDetail Failed!");
+        }
+      }
 }
 export default petDetailService;

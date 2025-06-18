@@ -183,7 +183,7 @@ const AddNewPetPage = () => {
                   <Col span={12}>
                     <Form.Item
                       label="Group"
-                      name="group"
+                      name="petGroup"
                       rules={[
                         { required: true, message: "Please input group" },
                       ]}

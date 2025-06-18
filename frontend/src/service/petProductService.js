@@ -48,5 +48,15 @@ const petProductService = {
               throw new Error("Update Pet Product Information Failed!");
           }
         },
+        deletePetProductById: async (petProductId) =>{
+            const response = await apiClient.delete("/petProducts/delete",{
+                params: { petProductId }
+            })
+            if (response.is_success) {
+                return response;
+            } else {
+                throw new Error("Delete Pet Product Failed!");
+            }
+          },
 }
 export default petProductService;
