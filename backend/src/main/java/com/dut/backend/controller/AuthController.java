@@ -42,8 +42,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AbstractResponse> login(@RequestBody LoginRequest request) throws BadRequestException {
-        var credentialRespone = authService.login(request);
-        return ResponseEntity.ok(AbstractResponse.successWithoutMeta(credentialRespone));
+        try {
+            var credentialRespone = authService.login(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(credentialRespone));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+
     }
     @PostMapping("/confirm-register")
     public ResponseEntity<AbstractResponse> confirmRegister(@RequestBody ConfirmRegisterRequest request) throws BadRequestException {

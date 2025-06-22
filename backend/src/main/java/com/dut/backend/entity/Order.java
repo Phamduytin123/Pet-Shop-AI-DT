@@ -1,6 +1,7 @@
 package com.dut.backend.entity;
 
 import com.dut.backend.entity.Enum.OrderStatus;
+import com.dut.backend.entity.Enum.PaymentMethod;
 import com.dut.backend.entity.Enum.ProductType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,9 @@ public class Order extends EntityBase{
     private String address;
     private String orderCode;
     private boolean isPaid = false;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod = PaymentMethod.SHIPCODE;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;

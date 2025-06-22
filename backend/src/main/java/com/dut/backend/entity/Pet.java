@@ -27,6 +27,7 @@ public class Pet extends EntityBase {
     private Integer space;
     private Integer petGroup;
     private String description;
+//    @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER, cascade = CascadeType.ALL,orphanRemoval = true)
     @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<PetDetail> petDetails;

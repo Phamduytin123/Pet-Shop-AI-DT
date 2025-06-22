@@ -107,4 +107,12 @@ public class PetServiceImpl  implements PetService {
     public List<Pet> searchPetsByName(String keyword) {
         return petRepository.findByNameContainingIgnoreCase(keyword);
     }
+
+    @Override
+    public void DeleteById(Long id) {
+        Pet pet = petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found with id: " + id));
+        List<PetDetail> petDetails = pet.getPetDetails();
+        petDetailRepository.deleteAll(petDetails);
+        petRepository.delete(pet);
+    }
 }

@@ -14,6 +14,7 @@ import com.dut.backend.repository.PetRepository;
 import com.dut.backend.service.PetDetailService;
 import com.dut.backend.service.PetService;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -153,5 +154,15 @@ public class PetController {
     @GetMapping("/search")
     public ResponseEntity<AbstractResponse> searchPets(@RequestParam String keyword) {
         return ResponseEntity.ok(AbstractResponse.successWithoutMeta(petService.searchPetsByName(keyword)));
+    }
+    @DeleteMapping("/delete")
+    @Transactional
+    public ResponseEntity<AbstractResponse> deletePet(@RequestParam("petId") Long petId){
+        try {
+            petService.DeleteById(petId);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMetaAndData());
+        } catch ( RuntimeException e){
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
     }
 }

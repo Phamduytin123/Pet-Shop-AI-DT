@@ -67,4 +67,13 @@ public class PetProductController {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
+    @DeleteMapping("/delete")
+    public ResponseEntity<AbstractResponse> deletePetProduct(@RequestParam("petProductId") Long petProductId) {
+        try {
+            petProductService.deletePetProductById(petProductId);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMetaAndData());
+        } catch ( RuntimeException e){
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
 }

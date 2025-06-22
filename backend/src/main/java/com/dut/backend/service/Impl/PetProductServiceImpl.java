@@ -2,10 +2,12 @@ package com.dut.backend.service.Impl;
 
 import com.dut.backend.dto.request.AddPetProductRequest;
 import com.dut.backend.dto.request.UpdatePetProductRequest;
+import com.dut.backend.entity.Pet;
 import com.dut.backend.entity.PetProduct;
 import com.dut.backend.repository.PetProductRepository;
 import com.dut.backend.service.CloudinaryService;
 import com.dut.backend.service.PetProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
@@ -66,5 +68,12 @@ public class PetProductServiceImpl implements PetProductService {
         foundPetProduct.setQuantity(request.getQuantity());
         foundPetProduct.setType(request.getType());
         return petProductRepository.save(foundPetProduct);
+    }
+
+    @Override
+    @Transactional
+    public void deletePetProductById(Long id) {
+        PetProduct petProduct = petProductRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet Product not found with id: " + id));
+        petProductRepository.delete(petProduct);
     }
 }

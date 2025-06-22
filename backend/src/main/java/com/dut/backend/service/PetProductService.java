@@ -14,4 +14,5 @@ public interface PetProductService {
     PetProduct getPetProductById(Long id) throws BadRequestException;
     PetProduct addImage(MultipartFile file, Long petProductId) throws BadRequestException;
     PetProduct upatePetProduct(UpdatePetProductRequest request) throws BadRequestException;
+    void deletePetProductById(Long id) ;
 }

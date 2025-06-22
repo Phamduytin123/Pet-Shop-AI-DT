@@ -60,4 +60,14 @@ public class PetDetailController {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
+    @DeleteMapping("/delete")
+    public ResponseEntity<AbstractResponse> deletePetDetail(@RequestParam("petDetailId") Long petDetailId) {
+        try {
+            System.out.println(petDetailId);
+            petDetailService.deletePetDetailById(petDetailId);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMetaAndData());
+        } catch ( RuntimeException e){
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
 }

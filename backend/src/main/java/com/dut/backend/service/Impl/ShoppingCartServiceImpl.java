@@ -1,6 +1,7 @@
 package com.dut.backend.service.Impl;
 
 import com.dut.backend.dto.request.AddCartRequest;
+import com.dut.backend.dto.request.UpdateCartRequest;
 import com.dut.backend.entity.Account;
 import com.dut.backend.entity.ItemBase;
 import com.dut.backend.entity.ShoppingCart;
@@ -39,5 +40,24 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public List<ShoppingCart> getListCartByAccountId(Long accountId) {
         return shoppingCartRepository.findByAccountId(accountId);
+    }
+
+    @Override
+    public ShoppingCart updateShoppingCart(UpdateCartRequest request) throws BadRequestException {
+        ShoppingCart foundedCart = shoppingCartRepository.findById(request.getCartId()).orElse(null);
+        if (foundedCart == null) {
+            throw new BadRequestException("shopping cart not found to update !!!");
+        } else {
+        foundedCart.setQuantity(request.getQuantity());}
+        return shoppingCartRepository.save(foundedCart);
+    }
+
+    @Override
+    public void deleteShoppingCart(Long cartId) throws BadRequestException {
+        ShoppingCart foundedCart = shoppingCartRepository.findById(cartId).orElse(null);
+        if (foundedCart == null) {
+            throw new BadRequestException("shopping cart not found to update !!!");
+        }
+        shoppingCartRepository.delete(foundedCart);
     }
 }

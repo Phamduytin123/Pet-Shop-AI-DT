@@ -16,4 +16,5 @@ public interface PetDetailService {
     PetDetail addPetDetailByBreed(AddPetDetailByBreedRequest request) throws BadRequestException;
     PetDetail addPetDetailImage(MultipartFile file, Long petDetailId) throws BadRequestException;
     PetDetail updatePetDetailInfo(UpdatePetDetailRequest request) throws BadRequestException;
+    void deletePetDetailById(Long id);
 }

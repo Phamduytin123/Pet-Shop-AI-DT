@@ -43,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             Account account = accountRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+            assert account != null;
+            if (!account.isActive()){
+                throw new BadRequestException("This Account is not active.");
+            }
 //            System.out.println(passwordEncoder.matches(loginRequest.getPassword(),account.getPassword()));
             return CredentialResponse.builder().token(jwtUtil.generateToken(account.getEmail(), account.getRole().name())).build();
         } catch (BadCredentialsException ex) {

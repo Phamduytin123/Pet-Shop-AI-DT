@@ -2,6 +2,7 @@ package com.dut.backend.service;
 
 import com.dut.backend.dto.request.CreateOrderRequest;
 import com.dut.backend.dto.request.UpdateOrderStatusRequest;
+import com.dut.backend.dto.request.UpdatePaymentStatus;
 import com.dut.backend.dto.response.MomoResponseDTO;
 import com.dut.backend.entity.Account;
 import com.dut.backend.entity.Order;
@@ -18,4 +19,7 @@ public interface OrderService {
     Order callback(Map<String, Object> responseBody);
     List<Order> getAllOrdersSortedByCreatedAtDesc();
     Order UpdateOrderStatus(UpdateOrderStatusRequest updateOrderStatusRequest) throws Exception;
+    Order CancelOrder(Long orderId) throws BadRequestException;
+    MomoResponseDTO createPaymentByOrder (Long orderId, Account account) throws Exception;
+    Order UpdatePaymentStatus(UpdatePaymentStatus updatePaymentStatus)throws Exception;
 }

@@ -65,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
                 .address(createOrderRequest.getAddress())
                 .phoneNumber(createOrderRequest.getPhoneNumber())
                 .totalPrice(createOrderRequest.getTotalPrice())
+                .paymentMethod(createOrderRequest.getPaymentMethod())
                 .status(OrderStatus.PENDING)
                 .build();
         orderRepository.save(order);
@@ -87,11 +88,9 @@ public class OrderServiceImpl implements OrderService {
                             .name(itemBase.getName())
                             .imageUrl(itemBase.getImage())
                     .build());
-            System.out.println("before call");
             ShoppingCart cart = shoppingCartRepository.findByAccountIdAndItemId(account.getId(),item.getItemId()).orElseThrow(() -> new BadRequestException("Can't find ShoppingCart"));
-            System.out.println("before call2");
             System.out.println("cart: "+cart);
-//            shoppingCartRepository.delete(cart);
+            shoppingCartRepository.delete(cart);
         }
 //        totalPrice = 10000;
         System.out.println("list items: "+listMomoItems);
@@ -112,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
         String rawSignature = String.format(
                 "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
                 accessKey,
-                10000,
+                totalPrice,
                 extraData,
                 ipnUrl,
                 orderId,
@@ -131,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
                 .partnerName("SpringBootShop")
                 .storeId("SpringMomoStore")
                 .requestId(requestId)
-                .amount(10000)
+                .amount(totalPrice)
                 .orderId(orderId)
                 .orderInfo(orderInfo)
                 .redirectUrl(redirectUrl)
@@ -159,6 +158,90 @@ public class OrderServiceImpl implements OrderService {
         System.out.println("Short link"+response.getBody().getShortLink());
         return response.getBody();
     }
+    @Override
+    public MomoResponseDTO createPaymentByOrder(Long orderId, Account account) throws Exception {
+        Order foundOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BadRequestException("Can't find Order to create payment")
+        );
+        int totalPrice = foundOrder.getTotalPrice();
+        List<MomoItemDTO> listMomoItems = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetailRepository.findByOrderId(orderId)) {
+            ItemBase itemBase = itemBaseRepository.findById(orderDetail.getItem().getId()).orElseThrow(()-> new BadRequestException("Can't find Item id: "+orderDetail.getItem().getId()));
+            listMomoItems.add(MomoItemDTO.builder()
+                    .price(itemBase.getPrice())
+                    .quantity(orderDetail.getQuantity())
+                    .name(itemBase.getName())
+                    .imageUrl(itemBase.getImage())
+                    .build());
+        }
+        System.out.println("list items: "+listMomoItems);
+        String requestId = "MOMO" + System.currentTimeMillis();
+        String orderInfo = "Thanh toán đơn hàng bằng MoMo";
+        System.out.println("oke1");
+        String extraData = Base64.getEncoder().encodeToString(
+                new ObjectMapper().writeValueAsString(Map.of(
+                        "accountId", account.getId(),
+                        "paymentCode", "MOMO" + System.currentTimeMillis(),
+                        "orderId", orderId
+                )).getBytes(StandardCharsets.UTF_8)
+        );
+        System.out.println("oke2");
+        System.out.println("extra "+extraData);
+        String rawSignature = String.format(
+                "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
+                accessKey,
+                totalPrice,
+                extraData,
+                ipnUrl,
+                "MOMO" + System.currentTimeMillis(),
+                orderInfo,
+                partnerCode,
+                redirectUrl,
+                requestId,
+                "payWithMethod"
+        );
+
+        // Tạo signature
+        String signature = hmacSHA256(rawSignature, secretKey);
+        System.out.println(signature);
+        MomoRequestDTO momoRequestDTO = MomoRequestDTO.builder()
+                .partnerCode(partnerCode)
+                .partnerName("SpringBootShop")
+                .storeId("SpringMomoStore")
+                .requestId(requestId)
+                .amount(totalPrice)
+                .orderId("MOMO" + System.currentTimeMillis())
+                .orderInfo(orderInfo)
+                .redirectUrl(redirectUrl)
+                .ipnUrl(ipnUrl)
+                .extraData(extraData)
+                .autoCapture(true)
+                .signature(signature)
+                .requestType("payWithMethod")
+                .lang("vi")
+                .items(listMomoItems)
+                .build();
+        //Send request
+        System.out.println("request "+momoRequestDTO);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<MomoRequestDTO> request = new HttpEntity<>(momoRequestDTO, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<MomoResponseDTO> response = restTemplate.postForEntity(momoEndpoint, request, MomoResponseDTO.class);
+        System.out.println("Short link"+response.getBody().getShortLink());
+        return response.getBody();
+    }
+
+    @Override
+    public Order UpdatePaymentStatus(UpdatePaymentStatus updatePaymentStatus) throws Exception {
+        Order foundOrder = orderRepository.findById(updatePaymentStatus.getOrderId()).orElseThrow(
+                () -> new BadRequestException("Can't find Order to update status")
+        );
+        foundOrder.setPaid(updatePaymentStatus.isPaid());
+        return orderRepository.save(foundOrder);
+    }
+
     private String hmacSHA256(String data, String key) throws Exception {
         Mac hmac = Mac.getInstance("HmacSHA256");
         hmac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
@@ -209,4 +292,17 @@ public class OrderServiceImpl implements OrderService {
         foundOrder.setStatus(request.getStatus());
         return orderRepository.save(foundOrder);
     }
+
+    @Override
+    public Order CancelOrder(Long orderId) throws BadRequestException {
+        Order foundOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BadRequestException("Can't find Order to cancel")
+        );
+        if (!foundOrder.getStatus().equals(OrderStatus.PENDING))
+            throw new BadRequestException("Can't cancel Order");
+        foundOrder.setStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(foundOrder);
+    }
+
+
 }

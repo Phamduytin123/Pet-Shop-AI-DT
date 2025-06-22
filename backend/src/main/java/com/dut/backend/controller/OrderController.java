@@ -7,6 +7,7 @@ import com.dut.backend.annotation.auth.PreAuthorizeCustomer;
 import com.dut.backend.common.model.AbstractResponse;
 import com.dut.backend.dto.request.CreateOrderRequest;
 import com.dut.backend.dto.request.UpdateOrderStatusRequest;
+import com.dut.backend.dto.request.UpdatePaymentStatus;
 import com.dut.backend.entity.Account;
 import com.dut.backend.entity.Order;
 import com.dut.backend.service.OrderDetailService;
@@ -52,6 +53,18 @@ public class OrderController {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
+    @PostMapping("/createPayment")
+    @PreAuthorizeCustomer
+    public ResponseEntity<AbstractResponse> createPaymentByOrder(@RequestParam("orderId") Long orderId, @CurrentAccount Account account) {
+        try {
+            var result = orderService.createPaymentByOrder(orderId, account);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(400).body(AbstractResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
     @PostMapping("/callback")
     public ResponseEntity<AbstractResponse> callback(@RequestBody Map<String, Object> responseBody) {
         try {
@@ -75,6 +88,27 @@ public class OrderController {
             var result = orderService.UpdateOrderStatus(request);
             return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
         } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/updatePaymentStatus")
+    @PreAuthorizeAllWithoutCustomer
+    public ResponseEntity<AbstractResponse> updatePaymentStatus(@RequestBody UpdatePaymentStatus request) throws Exception {
+        try {
+            System.out.println(request);
+            var result = orderService.UpdatePaymentStatus(request);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
+        }
+    }
+    @PutMapping("/cancel")
+    @PreAuthorizeCustomer
+    public ResponseEntity<AbstractResponse> cancelOrderById(@RequestParam("orderId") Long orderId) {
+        try {
+            var result = orderService.CancelOrder(orderId);
+            return ResponseEntity.ok(AbstractResponse.successWithoutMeta(result));
+        } catch (BadRequestException e) {
             return ResponseEntity.status(500).body(AbstractResponse.error(e.getMessage()));
         }
     }
