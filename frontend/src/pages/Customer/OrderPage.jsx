@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Table, Button, Tag, Flex } from "antd";
+import { Card, Row, Col, Table, Button, Tag, Flex, message } from "antd";
 import { useStateContext } from "../../context/StateContext";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layout/MainLayout";
@@ -8,7 +8,7 @@ import { formatDateTime } from "../../utils/formatUtils";
 import totalOrderIcon from "../../assets/svgs/totalOrderLogo.svg";
 import deliveringOrderIcon from "../../assets/svgs/deliveringLogo.svg";
 import completedOrderIcon from "../../assets/svgs/completedLogo.svg";
-import authService from "../../service/authService";
+
 const OrderPage = () => {
   const [state] = useStateContext();
   const navigate = useNavigate();
@@ -17,21 +17,33 @@ const OrderPage = () => {
   const [totalOrder, setTotalOrder] = useState(0);
   const [deliveringOrder, setDeliveringOrder] = useState(0);
   const [completedOrder, setCompletedOrder] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const res = await orderService.getOrder();
         const data = res.data;
+        console.log(data);
+
         const accountData = state.account;
-        const formattedOrders = data.map((order, index) => ({
+
+        // Sort orders by createdAt in descending order (newest first)
+        const sortedOrders = [...data].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        const formattedOrders = sortedOrders.map((order, index) => ({
           key: index,
           id: order.id,
           orderCode: "#" + order.orderCode,
           status: order.status,
           date: formatDateTime(order.createdAt),
           totalPrice: order.totalPrice,
+          paymentMethod: order.paymentMethod,
+          isPaid: order.paid,
         }));
+
         setOrders(formattedOrders);
         setAccount(accountData);
         setTotalOrder(formattedOrders.length);
@@ -47,6 +59,10 @@ const OrderPage = () => {
     };
     fetchOrders();
   }, []);
+
+  const handleRepayment = async (orderId) => {
+    navigate(`/orders/${orderId}`);
+  };
 
   const columns = [
     {
@@ -67,9 +83,51 @@ const OrderPage = () => {
       },
     },
     {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      render: (method) => (
+        <Tag color={method === "MOMO" ? "purple" : "blue"}>
+          {method === "MOMO" ? "MOMO" : "COD"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Payment Status",
+      key: "paymentStatus",
+      render: (_, record) => {
+        if (record.paymentMethod === "MOMO") {
+          return record.isPaid ? (
+            <Tag color="green">PAID</Tag>
+          ) : (
+            <Flex align="center" gap={8}>
+              <Tag color="red">UNPAID</Tag>
+              {record.status != "CANCELLED" && (
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => handleRepayment(record.id)}
+                  style={{ background: "#410075", color: "#fff" }}
+                >
+                  Pay Again
+                </Button>
+              )}
+            </Flex>
+          );
+        }
+        return record.isPaid ? (
+          <Tag color="green">PAID</Tag>
+        ) : (
+          <Tag color="blue">Cash on Delivery</Tag>
+        );
+      },
+    },
+    {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
       title: "Total Price",

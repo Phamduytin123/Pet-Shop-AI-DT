@@ -74,7 +74,7 @@ const LoginForm = () => {
     } catch (error) {
       showErrorNotification(
         "Login Failed",
-        "Please check again your password or email !!"
+        "Please check again your password, email or this account is not active!!"
       );
     }
   };

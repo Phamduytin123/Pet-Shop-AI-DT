@@ -1,20 +1,17 @@
-import MainLayout from "../../layout/MainLayout";
+import AdminLayout from "../../layout/AdminLayout";
 import React, { useState, useEffect } from "react";
-import { Card, Row, Table, Image, Flex, Button, message, Modal } from "antd";
+import { Card, Row, Table, Image, Flex } from "antd";
 import { useStateContext } from "../../context/StateContext";
 import { useParams } from "react-router-dom";
 import OrderStatus from "../../components/customer/OrderStatus";
 import orderService from "../../service/orderService";
 import { formatDateTime, formatPrice } from "../../utils/formatUtils";
 
-const OrderDetailPage = () => {
+const AdminOrderDetailPage = () => {
   const [state] = useStateContext();
   const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState([]);
   const [order, setOrder] = useState();
-  const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [payLoading, setPayLoading] = useState(false);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -41,33 +38,6 @@ const OrderDetailPage = () => {
     };
     fetchOrderDetails();
   }, [orderId]);
-
-  const handleCancelOrder = async () => {
-    setLoading(true);
-    try {
-      const numericOrderId = Number(orderId);
-      if (isNaN(numericOrderId)) {
-        throw new Error("Invalid order ID");
-      }
-      const res1 = await orderService.cancelOrderById(numericOrderId);
-      message.success("Order has been cancelled successfully");
-      // Refresh order data
-      const res = await orderService.getOrderDetailByOrderId(orderId);
-      const data = res.data;
-      const updatedOrder = data[0]?.order;
-      setOrder(updatedOrder);
-    } catch (error) {
-      console.log(error);
-      message.error("Failed to cancel order");
-    } finally {
-      setLoading(false);
-      setModalVisible(false);
-    }
-  };
-
-  const showCancelConfirm = () => {
-    setModalVisible(true);
-  };
 
   const columns = [
     {
@@ -128,28 +98,9 @@ const OrderDetailPage = () => {
         return 0;
     }
   };
-  const handlePayAgain = async () => {
-    setPayLoading(true);
-    try {
-      const numericOrderId = Number(orderId);
-      if (isNaN(numericOrderId)) {
-        throw new Error("Invalid order ID");
-      }
-      console.log(orderId);
 
-      const response = await orderService.createPaymentByOrder(numericOrderId);
-      if (response.payUrl) {
-        window.location.href = response.payUrl;
-      }
-    } catch (error) {
-      message.error("Failed to process payment. Please try again.");
-      console.error("Payment error:", error);
-    } finally {
-      setPayLoading(false);
-    }
-  };
   return (
-    <MainLayout>
+    <AdminLayout>
       <div
         style={{
           display: "flex",
@@ -174,20 +125,7 @@ const OrderDetailPage = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              position: "relative", // Added for absolute positioning of button
             }}
-            extra={
-              order?.status === "PENDING" && (
-                <Button
-                  type="primary"
-                  danger
-                  onClick={showCancelConfirm}
-                  style={{ backgroundColor: "#ff4d4f", borderColor: "#ffccc7" }}
-                >
-                  Cancel Order
-                </Button>
-              )
-            }
           >
             {/* Order Summary */}
             {order && (
@@ -266,48 +204,13 @@ const OrderDetailPage = () => {
                 <p>
                   <strong>Email:</strong> {order.account.email}
                 </p>
-                {order?.paymentMethod === "MOMO" && !order?.paid && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: 48,
-                      bottom: 48,
-                    }}
-                  >
-                    <Button
-                      type="primary"
-                      onClick={handlePayAgain}
-                      loading={payLoading}
-                      style={{
-                        backgroundColor: "#410075",
-                        color: "#fff",
-                        fontWeight: "bold",
-                        padding: "0 24px",
-                        height: 40,
-                      }}
-                    >
-                      Pay Again
-                    </Button>
-                  </div>
-                )}
               </div>
             )}
           </Card>
         </Row>
       </div>
-
-      {/* Cancel Order Confirmation Modal */}
-      <Modal
-        title="Confirm Cancellation"
-        visible={modalVisible}
-        onOk={handleCancelOrder}
-        onCancel={() => setModalVisible(false)}
-        confirmLoading={loading}
-      >
-        <p>Are you sure you want to cancel this order?</p>
-      </Modal>
-    </MainLayout>
+    </AdminLayout>
   );
 };
 
-export default OrderDetailPage;
+export default AdminOrderDetailPage;

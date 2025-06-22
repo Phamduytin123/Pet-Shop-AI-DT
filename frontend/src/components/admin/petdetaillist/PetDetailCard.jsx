@@ -8,6 +8,7 @@ const PetDetailCard = ({ petDetail, breed }) => {
   const navigate = useNavigate();
   const handleClick = (breed, id) => {
     // navigate(`/pet-detail/${breed}/${id}`);
+    navigate(`/admin/pets/${breed}/${id}/update`);
   };
   const handleEditClick = (e, breed, id) => {
     e.stopPropagation();

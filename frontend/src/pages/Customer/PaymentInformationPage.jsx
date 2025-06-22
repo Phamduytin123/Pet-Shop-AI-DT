@@ -34,7 +34,7 @@ const PaymentInformationPage = () => {
   const [detailAddress, setDetailAddress] = useState("");
   const [detailAddressError, setDetailAddressError] = useState("");
   const [fullAddress, setFullAddress] = useState("");
-  const [shippingMethod, setShippingMethod] = useState("SHIP_CODE");
+  const [shippingMethod, setShippingMethod] = useState("SHIPCODE");
   const location = useLocation();
   const { items } = location.state || {};
   useEffect(() => {
@@ -68,6 +68,7 @@ const PaymentInformationPage = () => {
   }, [selectedProvinceId]);
 
   const selectedItems = location.state.items || {};
+  console.log("wwhy", selectedItems);
 
   const totalAmount = Object.values(selectedItems).reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -150,8 +151,8 @@ const PaymentInformationPage = () => {
     if (!phoneValid) return;
 
     const itemList = Object.values(selectedItems);
-    const items = itemList.map(({ id, quantity }) => ({
-      itemId: id,
+    const items = itemList.map(({ itemId, quantity }) => ({
+      itemId: itemId,
       quantity,
     }));
 
@@ -159,12 +160,14 @@ const PaymentInformationPage = () => {
       phoneNumber,
       address: fullAddress,
       listItems: items,
+      paymentMethod: shippingMethod,
     };
+    console.log("hehehe", request);
 
     try {
       const response = await orderService.createOrder(request);
       console.log("short link", response.payUrl);
-      if (shippingMethod === "SHIP_CODE") {
+      if (shippingMethod === "SHIPCODE") {
         navigate("/pets");
       } else if (shippingMethod === "MOMO") {
         // navigate(response.shortLink);
@@ -254,8 +257,8 @@ const PaymentInformationPage = () => {
                   style={{ display: "flex", alignItems: "center", gap: 8 }}
                 >
                   <Checkbox
-                    checked={shippingMethod === "SHIP_CODE"}
-                    onChange={() => setShippingMethod("SHIP_CODE")}
+                    checked={shippingMethod === "SHIPCODE"}
+                    onChange={() => setShippingMethod("SHIPCODE")}
                   />
                   Ship CODE
                 </label>

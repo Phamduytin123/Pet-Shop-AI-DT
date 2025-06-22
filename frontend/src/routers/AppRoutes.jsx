@@ -26,6 +26,7 @@ import AdminPetProductListPage from "../pages/admin/PetProductListPage";
 import AddPetProductPage from "../pages/admin/AddPetProductPage";
 import UpdatePetProductPage from "../pages/admin/UpdatePetProductPage";
 import SellerAccountInfoPage from "../pages/admin/AccountInfoPage";
+import AdminOrderDetailPage from "../pages/admin/OrderDetailPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -98,6 +99,10 @@ const AppRoutes = () => {
       <Route
         path="/admin/orders"
         element={<AdminOrderPage></AdminOrderPage>}
+      ></Route>
+      <Route
+        path="/admin/orders/:orderId"
+        element={<AdminOrderDetailPage></AdminOrderDetailPage>}
       ></Route>
       <Route
         path="/admin/accounts"

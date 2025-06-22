@@ -147,12 +147,16 @@ const PetProductPage = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Button type="primary" onClick={handleAddToCart}>
+                  <Button
+                    type="primary"
+                    onClick={handleAddToCart}
+                    style={{ background: "#3e0068" }}
+                  >
                     Add to cart
                   </Button>
-                  <Button type="primary" onClick={handleBuyNow}>
+                  {/* <Button type="primary" onClick={handleBuyNow}>
                     Buy now
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>

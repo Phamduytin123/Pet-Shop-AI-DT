@@ -12,6 +12,7 @@ import {
   message,
   Radio,
   Modal,
+  DatePicker,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,6 +23,7 @@ import {
   showErrorNotification,
 } from "../../utils/commonUtils";
 import petDetailService from "../../service/petDetailService";
+import moment from "moment";
 
 const { Title } = Typography;
 
@@ -35,13 +37,15 @@ const UpdatePetDetailPage = () => {
 
   useEffect(() => {
     const fetchPetDetail = async () => {
-      //   console.log("enter fetch");
-
       try {
         const res = await petDetailService.getById(petDetailId);
-        // console.log("Fetch petdetail", res);
-
         const detail = res.data;
+
+        // Format dateIn for the form if it exists
+        if (detail.dateIn) {
+          detail.dateIn = moment(detail.dateIn);
+        }
+
         form.setFieldsValue(detail);
         setPetDetail(detail);
         if (detail.image) setImageUrl(detail.image);
@@ -84,10 +88,13 @@ const UpdatePetDetailPage = () => {
 
   const onFinish = async (values) => {
     try {
+      // Format dateIn before sending to API
       const petDetailData = {
         petDetailId,
         ...values,
+        dateIn: values.dateIn ? values.dateIn.format("YYYY-MM-DD") : null,
       };
+
       const res = await petDetailService.updatePetDetailInfo(petDetailData);
       showSuccessNotification("Success", "Pet detail updated successfully");
       navigate(`/admin/pets/${breed}/${petDetailId}/update`);
@@ -96,9 +103,9 @@ const UpdatePetDetailPage = () => {
       console.error(error);
     }
   };
+
   const handleDelete = async () => {
     try {
-      // Hiển thị hộp thoại xác nhận
       Modal.confirm({
         title: "Are you sure you want to delete this pet detail?",
         content: "This action cannot be undone.",
@@ -123,6 +130,7 @@ const UpdatePetDetailPage = () => {
       console.error("Error showing confirmation:", error);
     }
   };
+
   return (
     <AdminLayout>
       <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
@@ -188,11 +196,17 @@ const UpdatePetDetailPage = () => {
 
                   <Col span={12}>
                     <Form.Item
-                      label="Age"
-                      name="age"
-                      rules={[{ required: true, message: "Please input age" }]}
+                      label="Date In"
+                      name="dateIn"
+                      rules={[
+                        { required: true, message: "Please select date" },
+                      ]}
                     >
-                      <InputNumber min={0} style={{ width: "100%" }} />
+                      <DatePicker
+                        format="DD/MM/YYYY"
+                        style={{ width: "100%" }}
+                        placeholder="Select date"
+                      />
                     </Form.Item>
                   </Col>
 

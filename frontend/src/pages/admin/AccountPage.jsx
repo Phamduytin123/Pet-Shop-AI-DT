@@ -49,7 +49,7 @@ const AdminAccountsPage = () => {
     try {
       const req = {
         accountId: accountId,
-        isActive: newActiveStatus,
+        active: newActiveStatus,
       };
       await authService.updateActivate(req);
       setAccounts((prev) =>

@@ -19,7 +19,29 @@ const shoppingCartService = {
       console.error("Error adding to cart:", error);
       throw error;
     }
-  }
+  },
+  updateCart: async (updateCartRequest) => {
+    try {
+      const response = await apiClient.put("/shopping-carts/update", updateCartRequest);
+      return response.data?.data; 
+    } catch (error) {
+      console.error("Error update cart:", error);
+      throw error;
+    }
+  },
+  deleteCartById: async (cartId) => {
+
+      const response = await apiClient.delete("/shopping-carts/delete",{
+        params: { cartId }
+    });
+      console.log("asaad",response);
+      
+      if (response.is_success) {
+        return response;
+    } else {
+        throw new Error("Delete Failed!");
+    }
+  },
 };
 
 export default shoppingCartService;

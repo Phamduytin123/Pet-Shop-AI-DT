@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Table, Tag, Button, Select } from "antd";
+import { Card, Table, Tag, Button, Select, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layout/AdminLayout";
 import orderService from "../../service/orderService";
@@ -48,6 +48,8 @@ const AdminOrderPage = () => {
           status: order.status,
           date: formatDateTime(order.createdAt),
           totalPrice: order.totalPrice,
+          paymentMethod: order.paymentMethod,
+          isPaid: order.paid,
         }));
         setOrders(formattedOrders);
       } catch (error) {
@@ -77,6 +79,25 @@ const AdminOrderPage = () => {
     }
   };
 
+  const handlePaymentStatusChange = async (orderId, isPaid) => {
+    try {
+      const data = { orderId, paid: isPaid };
+      await orderService.updatePaymentStatus(data);
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, isPaid } : order
+        )
+      );
+      showSuccessNotification(
+        "Update Success",
+        "Payment status updated successfully"
+      );
+    } catch (error) {
+      console.error("Update failed:", error);
+      showErrorNotification("Update failed", "Failed to update payment status");
+    }
+  };
+
   const filteredOrders = filteredStatus
     ? orders.filter((order) => order.status === filteredStatus)
     : orders;
@@ -102,6 +123,36 @@ const AdminOrderPage = () => {
               <Tag color={statusColors[option]}>{option}</Tag>
             </Option>
           ))}
+        </Select>
+      ),
+    },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      render: (method) => (
+        <Tag color={method === "MOMO" ? "purple" : "blue"}>
+          {method === "MOMO" ? "MOMO" : "COD"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Payment Status",
+      key: "paymentStatus",
+      render: (_, record) => (
+        <Select
+          value={record.isPaid ? "PAID" : "UNPAID"}
+          onChange={(value) =>
+            handlePaymentStatusChange(record.id, value === "PAID")
+          }
+          style={{ width: 120 }}
+        >
+          <Option value="PAID">
+            <Tag color="green">PAID</Tag>
+          </Option>
+          <Option value="UNPAID">
+            <Tag color="red">UNPAID</Tag>
+          </Option>
         </Select>
       ),
     },

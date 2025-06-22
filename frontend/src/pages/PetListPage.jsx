@@ -181,7 +181,7 @@ const PetListPage = () => {
                 </Upload.Dragger>
                 {predictedPet && (
                   <Card
-                    title={`Kết quả: ${predictedPet.name}`}
+                    title={`Result: ${predictedPet.name}`}
                     style={{ marginTop: 24 }}
                     cover={
                       <Image src={predictedPet.image} alt={predictedPet.name} />

@@ -11,6 +11,7 @@ import {
   Upload,
   message,
   Radio,
+  DatePicker,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import petService from "../../service/petService";
@@ -21,6 +22,7 @@ import {
 } from "../../utils/commonUtils";
 import AdminLayout from "../../layout/AdminLayout";
 import petDetailService from "../../service/petDetailService";
+import moment from "moment";
 
 const { Title } = Typography;
 
@@ -61,6 +63,7 @@ const AddPetDetailPage = () => {
       const petDetailData = {
         ...values,
         breed,
+        dateIn: values.dateIn ? values.dateIn.format("YYYY-MM-DD") : null, // Format date before sending
       };
 
       const file = fileUploadRef;
@@ -72,10 +75,10 @@ const AddPetDetailPage = () => {
         return;
       }
 
-      const res = await petDetailService.addPetDetailInfo(petDetailData); // Giả định có hàm này trong petService
+      const res = await petDetailService.addPetDetailInfo(petDetailData);
       console.log(res);
 
-      const res2 = await petDetailService.addPetDetailImage(file, res.data.id); // Giả định có hàm này
+      const res2 = await petDetailService.addPetDetailImage(file, res.data.id);
       console.log(res2);
 
       showSuccessNotification("Success", "Pet detail added successfully!");
@@ -141,11 +144,17 @@ const AddPetDetailPage = () => {
 
                   <Col span={12}>
                     <Form.Item
-                      label="Age"
-                      name="age"
-                      rules={[{ required: true, message: "Please input age" }]}
+                      label="Date In"
+                      name="dateIn"
+                      rules={[
+                        { required: true, message: "Please select date" },
+                      ]}
                     >
-                      <InputNumber min={0} max={50} style={{ width: "100%" }} />
+                      <DatePicker
+                        format="DD/MM/YYYY"
+                        style={{ width: "100%" }}
+                        placeholder="Select date"
+                      />
                     </Form.Item>
                   </Col>
 

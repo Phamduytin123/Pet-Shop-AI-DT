@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Button, InputNumber, Card, Descriptions, Space } from "antd";
+import {
+  Button,
+  InputNumber,
+  Card,
+  Descriptions,
+  Space,
+  DatePicker,
+  Typography,
+} from "antd";
 import { useParams } from "react-router-dom";
 import petDetailService from "../service/petDetailService";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../layout/MainLayout";
 import petService from "../service/petService";
-import { ReducerCases } from "../constants/ReducerCases";
 import { useStateContext } from "../context/StateContext";
 import { useNavigate } from "react-router-dom";
 import shoppingCartService from "../service/shoppingCartService";
@@ -13,6 +20,10 @@ import {
   showErrorNotification,
   showSuccessNotification,
 } from "../utils/commonUtils";
+import moment from "moment";
+
+const { Text } = Typography;
+
 const PetDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [petDetail, setPetDetail] = useState();
@@ -21,21 +32,19 @@ const PetDetailPage = () => {
   const [state, dispatch] = useStateContext();
   const navigate = useNavigate();
 
-  console.log("id", petDetailId);
-  console.log("breed", breed);
-
   useEffect(() => {
     const fetchGetPetDetailById = async () => {
-      console.log("Gọi API với id:", petDetailId);
       try {
         const res = await petDetailService.getById(petDetailId);
-        console.log(res);
         const res2 = await petService.getPetInfoByBreed(breed);
-        console.log(res2);
 
         const data = res.data;
         const data2 = res2.data;
-        console.log("ok" + data);
+
+        // Format dateIn for display if it exists
+        if (data.dateIn) {
+          data.formattedDateIn = moment(data.dateIn).format("DD/MM/YYYY");
+        }
 
         setPetDetail(data);
         setPet(data2);
@@ -45,8 +54,8 @@ const PetDetailPage = () => {
     };
     fetchGetPetDetailById();
   }, [petDetailId]);
+
   const handleAddToCart = async () => {
-    console.log("Thêm vào giỏ hàng:", { petDetail, quantity });
     if (!state.account) {
       navigate("/login");
     } else {
@@ -54,8 +63,6 @@ const PetDetailPage = () => {
         itemId: petDetail.id,
         quantity: quantity,
       };
-      console.log(request);
-
       try {
         const res = await shoppingCartService.addToCart(request);
         showSuccessNotification(
@@ -123,8 +130,19 @@ const PetDetailPage = () => {
                   <Descriptions.Item label="Color">
                     {petDetail.color}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Age">
-                    {petDetail.age} tháng
+                  <Descriptions.Item label="Date In">
+                    {petDetail.formattedDateIn ? (
+                      <Text>{petDetail.formattedDateIn}</Text>
+                    ) : (
+                      <DatePicker
+                        format="DD/MM/YYYY"
+                        style={{ width: "100%" }}
+                        value={
+                          petDetail.dateIn ? moment(petDetail.dateIn) : null
+                        }
+                        disabled
+                      />
+                    )}
                   </Descriptions.Item>
                   <Descriptions.Item label="Gender">
                     {petDetail.gender ? "Male" : "Female"}
@@ -167,12 +185,16 @@ const PetDetailPage = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Button type="primary" onClick={handleAddToCart}>
+                  <Button
+                    type="primary"
+                    onClick={handleAddToCart}
+                    style={{ background: "#3e0068" }}
+                  >
                     Add to cart
                   </Button>
-                  <Button type="primary" onClick={handleBuyNow}>
+                  {/* <Button type="primary" onClick={handleBuyNow}>
                     Buy now
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
