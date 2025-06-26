@@ -31,7 +31,7 @@ const PetProductPage = () => {
       }
     };
     fetchProduct();
-  }, [petProductId]);
+  }, []);
 
   const handleAddToCart = async () => {
     if (!state.account) {

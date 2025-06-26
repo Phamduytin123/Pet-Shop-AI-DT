@@ -32,7 +32,7 @@ public class AuthController {
         return ResponseEntity.ok(AbstractResponse.successWithoutMeta(new AccountInfo().fromEntity(account)));
     }
     @PostMapping("/register")
-    public ResponseEntity<AbstractResponse> register(@RequestBody RegisterRequest registerRequest) throws BadRequestException {
+    public ResponseEntity<AbstractResponse> register(@RequestBody @Valid RegisterRequest registerRequest) throws BadRequestException {
         System.out.println(registerRequest);
 //        var accountResponse = authService.register(registerRequest);
 //        return ResponseEntity.ok(AbstractResponse.successWithoutMeta(accountResponse));

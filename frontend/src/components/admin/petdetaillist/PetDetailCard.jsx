@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-
+import { formatPrice } from "../../../utils/formatUtils";
 import { useNavigate } from "react-router-dom";
 const PetDetailCard = ({ petDetail, breed }) => {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const PetDetailCard = ({ petDetail, breed }) => {
       />
       <Card.Meta
         title={petDetail.color}
-        description={`Giá: ${petDetail.price} VND`}
+        description={`Giá: ${formatPrice(petDetail.price)}`}
       />
     </Card>
   );

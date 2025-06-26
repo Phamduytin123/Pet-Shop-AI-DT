@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 # Đường dẫn đến model .keras
-MODEL_PATH = r"D:\LN_\totnghiep\Pet-Shop-AI-DT\AI\model\best_model_v2.h5"
+MODEL_PATH = r"D:\LN_\totnghiep\Pet-Shop-AI-DT\AI\model\best_model_v3.h5"
 print("Zip test:", zipfile.is_zipfile(MODEL_PATH))
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
@@ -48,7 +48,7 @@ class_labels = [
     "Exotic Shorthair",
     "Lykoi",
     "Maine Coon",
-    "Manx",
+    # "Manx",
     "Norwegian Forest",
     "Persian",
     "Ragdoll",

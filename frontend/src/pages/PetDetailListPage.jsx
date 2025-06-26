@@ -22,7 +22,7 @@ const PetDetailListPage = () => {
       }
     };
     fetchGetListPetDetail();
-  }, [breed]);
+  }, []);
 
   return (
     <>

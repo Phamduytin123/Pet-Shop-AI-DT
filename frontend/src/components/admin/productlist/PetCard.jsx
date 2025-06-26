@@ -56,7 +56,7 @@ const AdminPetCard = ({ pet }) => {
           padding: 4,
         }}
       />
-      <Card.Meta title={pet.name} description={`Giá: ${pet.breed} VND`} />
+      <Card.Meta title={pet.name} description={pet.description} />
     </Card>
   );
 };

@@ -195,7 +195,7 @@ const AccountInfoPage = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item name="email" label="Email">
-                      <Input />
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                   <Col span={12}>

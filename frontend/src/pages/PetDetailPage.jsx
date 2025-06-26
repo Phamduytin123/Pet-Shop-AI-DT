@@ -53,7 +53,7 @@ const PetDetailPage = () => {
       }
     };
     fetchGetPetDetailById();
-  }, [petDetailId]);
+  }, []);
 
   const handleAddToCart = async () => {
     if (!state.account) {

@@ -3,11 +3,12 @@ import React from "react";
 import { Card, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
+import { formatPrice } from "../../../utils/formatUtils";
 const AdminPetProductCard = ({ petProduct }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/admin/petProducts/${petProduct.id}`);
+    navigate(`/admin/petProducts/update/${petProduct.id}`);
   };
   const handleEditClick = (e) => {
     e.stopPropagation(); // Ngăn không cho card click bị kích hoạt
@@ -54,7 +55,7 @@ const AdminPetProductCard = ({ petProduct }) => {
       />
       <Card.Meta
         title={petProduct.name}
-        description={`Giá: ${petProduct.price} VND`}
+        description={`Giá: ${formatPrice(petProduct.price)}`}
       />
     </Card>
   );

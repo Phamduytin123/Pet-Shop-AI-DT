@@ -2,6 +2,7 @@
 import React from "react";
 import { Card } from "antd";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../../../utils/formatUtils";
 const PetProductCard = ({ petProduct }) => {
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const PetProductCard = ({ petProduct }) => {
     >
       <Card.Meta
         title={petProduct.name}
-        description={`Giá: ${petProduct.price} VND`}
+        description={`Giá: ${formatPrice(petProduct.price)}`}
       />
     </Card>
   );

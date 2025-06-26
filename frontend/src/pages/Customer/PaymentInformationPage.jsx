@@ -22,7 +22,9 @@ const { Option } = Select;
 const PaymentInformationPage = () => {
   const [state] = useStateContext();
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(
+    state.account?.phone_number || ""
+  );
   const [phoneError, setPhoneError] = useState("");
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [provinces, setProvinces] = useState([]);
@@ -33,10 +35,12 @@ const PaymentInformationPage = () => {
   const [cityError, setCityError] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
   const [detailAddressError, setDetailAddressError] = useState("");
-  const [fullAddress, setFullAddress] = useState("");
+  const [fullAddress, setFullAddress] = useState(state.account?.address || "");
   const [shippingMethod, setShippingMethod] = useState("SHIPCODE");
   const location = useLocation();
   const { items } = location.state || {};
+  const hasExistingAddress = !!state.account?.address;
+  // const hasExistingPhone = !!state.account?.phone_number;
   useEffect(() => {
     axios
       .get("https://esgoo.net/api-tinhthanh/1/0.htm")
@@ -105,6 +109,7 @@ const PaymentInformationPage = () => {
   };
   // Validate address modal fields
   const validateAddressFields = () => {
+    if (hasExistingAddress) return true;
     let valid = true;
     if (!selectedProvinceId) {
       setProvinceError("Province is required");
@@ -128,6 +133,10 @@ const PaymentInformationPage = () => {
   };
   const handleAddressConfirm = () => {
     if (!validateAddressFields()) return;
+    if (hasExistingAddress) {
+      setAddressModalVisible(false);
+      return;
+    }
     const province = provinces.find((p) => p.id === selectedProvinceId);
     const provinceName = province ? province.name : "";
     const combinedAddress = `${provinceName}, ${selectedCityId}, ${detailAddress}`;
@@ -138,7 +147,8 @@ const PaymentInformationPage = () => {
   const handleConfirmOrder = async () => {
     const phoneValid = validatePhoneNumber();
     const addressValid =
-      fullAddress && selectedProvinceId && selectedCityId && detailAddress;
+      hasExistingAddress ||
+      (fullAddress && selectedProvinceId && selectedCityId && detailAddress);
     if (!addressValid) {
       // Mở modal để người dùng chỉnh sửa nếu chưa nhập address
       setAddressModalVisible(true);

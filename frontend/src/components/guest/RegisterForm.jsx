@@ -1,19 +1,39 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, Flex, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, message, Flex } from "antd";
 import RegisterCat from "../../assets/images/catRegister.png";
 import "../../assets/scss/FormRegister.scss";
-import { useStateContext } from "../../context/StateContext";
 import authService from "../../service/authService";
 import { useNavigate } from "react-router-dom";
-export default function RegisteForm() {
+
+export default function RegisterForm() {
   const [formStep, setFormStep] = useState("register");
   const [email, setEmail] = useState("");
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  // Validation rules
+  const passwordRules = [
+    { required: true, message: "Please input your password!" },
+    { min: 8, message: "Password must be at least 8 characters!" },
+    {
+      pattern:
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      message:
+        "Password must contain at least one uppercase, one lowercase, one number and one special character!",
+    },
+  ];
+
+  const emailRules = [
+    { required: true, message: "Please input your email!" },
+    {
+      type: "email",
+      message: "Please enter a valid email address!",
+    },
+  ];
+
   const handleRegister = async (values) => {
+    await form.validateFields();
     const { email, fullName, password, confirmPassword } = values;
     const credentials = {
       email: email,
@@ -21,7 +41,7 @@ export default function RegisteForm() {
       password: password,
       confirmPassword: confirmPassword,
     };
-    console.log(credentials);
+
     setLoading(true);
     try {
       const response = await authService.register(credentials);
@@ -29,8 +49,11 @@ export default function RegisteForm() {
       message.success("OTP has been sent to your email");
       setEmail(values.email);
       setFormStep("otp");
-    } catch (err) {
-      message.error(err.message);
+    } catch (error) {
+      message.error("Registration failed");
+      // if (!error.errorFields) {
+      //   message.error("Registration failed" || "Registration failed");
+      // }
     } finally {
       setLoading(false);
     }
@@ -43,11 +66,9 @@ export default function RegisteForm() {
       const response = await authService.confirmOtp(request);
       if (!response.is_success) throw new Error("Authorize OTP code failed!");
       message.success("Authorize OTP code success!");
-      console.log(response.data);
-
       navigate("/login");
     } catch (err) {
-      message.error(err.message);
+      message.error(err.message || "OTP verification failed");
     } finally {
       setLoading(false);
     }
@@ -71,13 +92,15 @@ export default function RegisteForm() {
         </h1>
 
         <Form
-          // name="register_form"
-          // initialValues={{ remember: true }}
-          // onFinish={onFinish}
           form={form}
           className="dynamic_form"
           name="dynamic_form"
           onFinish={formStep === "register" ? handleRegister : handleOtpSubmit}
+          onFinishFailed={() =>
+            message.error("Please fill all required fields correctly")
+          }
+          validateTrigger={["onChange", "onBlur"]}
+          validateMessages={{ required: "'${name}' is required!" }}
         >
           {formStep === "register" ? (
             <>
@@ -85,34 +108,40 @@ export default function RegisteForm() {
                 name="fullName"
                 rules={[
                   { required: true, message: "Please enter your fullname!" },
+                  {
+                    min: 2,
+                    message: "Fullname must be at least 2 characters!",
+                  },
                 ]}
               >
                 <Input placeholder="Fullname" />
               </Form.Item>
 
-              <Form.Item
-                name="email"
-                rules={[{ required: true, message: "Please enter email!" }]}
-              >
+              <Form.Item name="email" rules={emailRules}>
                 <Input placeholder="Email" />
               </Form.Item>
+
               <Form.Item
                 name="password"
-                rules={[{ required: true, message: "Please enter password!" }]}
+                rules={passwordRules}
+                validateTrigger={["onChange", "onBlur"]}
+                validateFirst
               >
                 <Input.Password placeholder="Password" />
               </Form.Item>
+
               <Form.Item
                 name="confirmPassword"
+                dependencies={["password"]}
                 rules={[
-                  { required: true, message: "Please enter confirm password!" },
+                  { required: true, message: "Please confirm your password!" },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (!value || getFieldValue("password") === value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(
-                        new Error("Confirm password incorrect!")
+                        new Error("The two passwords do not match!")
                       );
                     },
                   }),
@@ -124,11 +153,18 @@ export default function RegisteForm() {
           ) : (
             <Form.Item
               name="otp"
-              rules={[{ required: true, message: "Please enter OTP code!" }]}
+              rules={[
+                { required: true, message: "Please enter OTP code!" },
+                { len: 6, message: "OTP must be 6 characters!" },
+              ]}
             >
-              <Input placeholder="Enter OTP code from your email" />
+              <Input
+                placeholder="Enter OTP code from your email"
+                maxLength={6}
+              />
             </Form.Item>
           )}
+
           <Form.Item>
             <Button
               type="primary"
@@ -142,6 +178,7 @@ export default function RegisteForm() {
           </Form.Item>
         </Form>
       </div>
+
       <div
         className="right-image"
         style={{
@@ -151,7 +188,7 @@ export default function RegisteForm() {
       >
         <img
           src={RegisterCat}
-          alt=""
+          alt="Register Illustration"
           style={{
             width: "100%",
             height: "100%",
@@ -159,7 +196,7 @@ export default function RegisteForm() {
             borderRadius: "8px",
             boxShadow: "0 0 10px rgba(0,0,0,0.1)",
           }}
-        ></img>
+        />
       </div>
     </Flex>
   );

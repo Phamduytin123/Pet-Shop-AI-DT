@@ -24,7 +24,7 @@ const AdminPetDetailListPage = () => {
       }
     };
     fetchGetListPetDetail();
-  }, [breed]);
+  }, []);
 
   const handleAddNewPet = () => {
     navigate(`/admin/pets/${breed}/add`);
